@@ -1,0 +1,37 @@
+// ------------------------------------------------------------
+// VEDIC JOURNEY — DESIGN TOKENS
+// ------------------------------------------------------------
+
+// Brand
+$color-ivory: #f4f0e8;
+$color-ivory-light: #faf8f3;
+$color-charcoal: #171715;
+$color-stone: #9b958b;
+$color-sand: #d9d0c2;
+
+// Existing Vedic Journey identity — use sparingly
+$color-plum: #5c174f;
+
+// Text
+$color-text: $color-charcoal;
+$color-text-light: $color-ivory-light;
+$color-text-muted: #706c65;
+
+// Layout
+$container-max: 1440px;
+$page-padding: clamp(20px, 4vw, 72px);
+
+// Spacing
+$section-space: clamp(90px, 10vw, 180px);
+
+// Transitions
+$ease-luxury: cubic-bezier(0.22, 1, 0.36, 1);
+$transition-fast: 300ms $ease-luxury;
+$transition-medium: 600ms $ease-luxury;
+$luxury-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+// Layers
+$z-video: 0;
+$z-overlay: 1;
+$z-content: 2;
+$z-header: 100;

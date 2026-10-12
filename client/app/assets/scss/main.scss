@@ -1,0 +1,41 @@
+@use './variables' as *;
+@use './reset';
+@use './typography';
+
+:root {
+  --color-ivory: #f4f0e8;
+  --color-ivory-light: #faf8f3;
+  --color-charcoal: #171715;
+  --color-stone: #9b958b;
+  --color-plum: #5c174f;
+
+  --page-padding: clamp(20px, 4vw, 72px);
+}
+
+html {
+  background: $color-ivory;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.container {
+  width: min(
+    calc(100% - (var(--page-padding) * 2)),
+    #{$container-max}
+  );
+  margin-inline: auto;
+}
+
+.section {
+  position: relative;
+  padding-block: $section-space;
+}
+@media (pointer: fine) {
+  body,
+  a,
+  button {
+    cursor: none;
+  }
+}

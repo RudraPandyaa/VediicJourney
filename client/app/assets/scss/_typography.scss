@@ -1,0 +1,129 @@
+// ============================================================
+// VEDIC JOURNEY — GLOBAL TYPOGRAPHY SYSTEM
+// ============================================================
+
+:root {
+  // Display / Hero
+  --fs-display: clamp(4rem, 6.4vw, 7.4rem);
+
+  // Main section headings
+  --fs-heading-xl: clamp(3.5rem, 5.5vw, 6.5rem);
+  --fs-heading-lg: clamp(2.75rem, 4vw, 4.75rem);
+  --fs-heading-md: clamp(2rem, 2.8vw, 3.25rem);
+
+  // Supporting copy
+  --fs-body-lg: clamp(1.1rem, 1.25vw, 1.3rem);
+  --fs-body: 1rem;
+  --fs-body-sm: 0.875rem;
+
+  // Small luxury editorial text
+  --fs-eyebrow: clamp(0.78rem, 0.75vw, 0.9rem);
+  --fs-nav: clamp(0.72rem, 0.7vw, 0.82rem);
+  --fs-link: clamp(0.75rem, 0.75vw, 0.88rem);
+}
+
+
+// ------------------------------------------------------------
+// DISPLAY
+// Used ONLY for major page hero titles
+// ------------------------------------------------------------
+
+.display-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: var(--fs-display);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+
+
+// ------------------------------------------------------------
+// SECTION TITLES
+// ------------------------------------------------------------
+
+.heading-xl {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: var(--fs-heading-xl);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+}
+
+.heading-lg {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: var(--fs-heading-lg);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+}
+
+.heading-md {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: var(--fs-heading-md);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+
+// ------------------------------------------------------------
+// EYEBROW / SUBTITLE
+// Example: BESPOKE TRAVEL — INDIA & THE WORLD
+// ------------------------------------------------------------
+
+.eyebrow {
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+
+// ------------------------------------------------------------
+// BODY
+// ------------------------------------------------------------
+
+.body-large {
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--fs-body-lg);
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+}
+
+.body {
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--fs-body);
+  font-weight: 400;
+  line-height: 1.7;
+}
+
+
+// ------------------------------------------------------------
+// NAVIGATION
+// ------------------------------------------------------------
+
+.nav-label {
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--fs-nav);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+
+// ------------------------------------------------------------
+// TEXT LINK / CTA
+// ------------------------------------------------------------
+
+.text-link {
+  font-family: 'Manrope', sans-serif;
+  font-size: var(--fs-link);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
