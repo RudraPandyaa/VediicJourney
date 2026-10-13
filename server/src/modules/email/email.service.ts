@@ -5,23 +5,47 @@ import {
 import {
   ConfigService,
 } from '@nestjs/config'
-import {
-  Resend,
-} from 'resend'
+import * as nodemailer from 'nodemailer'
+import type {
+  Transporter,
+} from 'nodemailer'
 
 @Injectable()
 export class EmailService {
-  private readonly resend: Resend
+  private readonly transporter:
+    Transporter
 
   constructor(
     private readonly configService:
       ConfigService,
   ) {
-    this.resend = new Resend(
-      this.configService.getOrThrow<string>(
-        'RESEND_API_KEY',
-      ),
-    )
+    this.transporter =
+      nodemailer.createTransport({
+        host:
+          this.configService.getOrThrow<string>(
+            'BREVO_SMTP_HOST',
+          ),
+
+        port: Number(
+          this.configService.getOrThrow<string>(
+            'BREVO_SMTP_PORT',
+          ),
+        ),
+
+        secure: false,
+
+        auth: {
+          user:
+            this.configService.getOrThrow<string>(
+              'BREVO_SMTP_USER',
+            ),
+
+          pass:
+            this.configService.getOrThrow<string>(
+              'BREVO_SMTP_KEY',
+            ),
+        },
+      })
   }
 
   async sendAdminInvite(params: {
@@ -42,14 +66,23 @@ export class EmailService {
 
     try {
       const result =
-        await this.resend.emails.send({
+        await this.transporter.sendMail({
           /*
            * Development sender.
-           * Production mein verified
-           * Vedic Journey domain use karenge.
+           *
+           * Later we can use:
+           * Vedic Journey
+           * <noreply@vedicjourney.in>
+           * after domain verification.
            */
-          from:
-            'Vedic Journey <onboarding@resend.dev>',
+          from: {
+            name: 'Vedic Journey',
+            address:
+              this.configService
+                .getOrThrow<string>(
+                  'BREVO_SMTP_USER',
+                ),
+          },
 
           to: params.email,
 
@@ -152,21 +185,12 @@ export class EmailService {
           `,
         })
 
-      if (result.error) {
-        console.error(
-          'Resend invite error:',
-          result.error,
-        )
-
-        throw new InternalServerErrorException(
-          'Unable to send admin invitation email',
-        )
+      return {
+        messageId: result.messageId,
       }
-
-      return result.data
     } catch (error) {
       console.error(
-        'Admin invite email failed:',
+        'Brevo admin invite email failed:',
         error,
       )
 
