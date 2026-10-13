@@ -34,6 +34,12 @@ export class AuthService {
       )
     }
 
+    if (!admin.passwordHash) {
+      throw new UnauthorizedException(
+        'Admin account setup is incomplete',
+      )
+    }
+
     const passwordMatches =
       await bcrypt.compare(
         loginDto.password,
@@ -92,10 +98,6 @@ export class AuthService {
       String(admin._id),
     )
 
-    await this.adminsService.updateLastLogin(
-      String(admin._id),
-    )
-
     return {
       success: true,
 
@@ -115,7 +117,6 @@ export class AuthService {
           await this.jwtService.verifyAsync<{
             sub: string
             email: string
-            role: string
           }>(
             refreshToken,
             {

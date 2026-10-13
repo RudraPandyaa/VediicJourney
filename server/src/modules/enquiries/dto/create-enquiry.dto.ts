@@ -18,7 +18,6 @@ import {
 import {
   EnquiryType,
 } from '../schemas/enquiry.schema'
-
 export class CreateEnquiryDto {
   @IsEnum(EnquiryType)
   type!: EnquiryType

@@ -233,7 +233,7 @@ watch(
 <style scoped>
 .picker-backdrop {
   position: fixed;
-  z-index: 1400;
+  z-index: 20000;
   inset: 0;
   display: grid;
   padding: 24px;
@@ -241,7 +241,6 @@ watch(
   background: rgba(9, 6, 9, .72);
   backdrop-filter: blur(8px);
 }
-
 .picker-panel {
   display: flex;
   width: min(100%, 920px);

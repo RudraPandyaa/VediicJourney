@@ -564,7 +564,7 @@ onMounted(fetchExperiences)
   background: var(--surface-soft);
   color: var(--text);
   font: inherit;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .search input {

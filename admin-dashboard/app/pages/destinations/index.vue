@@ -597,7 +597,7 @@ onMounted(async () => {
   background: var(--brand-gradient);
   color: white;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
   box-shadow:
     0 10px 24px
@@ -621,7 +621,7 @@ onMounted(async () => {
 
 .summary-grid span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: .13em;
 }
@@ -670,7 +670,7 @@ onMounted(async () => {
   background: var(--surface-soft);
   color: var(--text);
   font: inherit;
-  font-size: 9px;
+  font-size: 14px;
 }
 
 .search input {
@@ -706,7 +706,7 @@ onMounted(async () => {
   border-bottom: 1px solid var(--border);
   background: #fbf9fa;
   color: #8f858d;
-  font-size: 7px;
+  font-size: 14px;
   font-weight: 750;
   letter-spacing: .15em;
 }
@@ -756,13 +756,13 @@ onMounted(async () => {
 }
 
 .destination-info strong {
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .destination-info p {
   margin: 3px 0;
   color: var(--brand-dark);
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .destination-info small {
@@ -770,14 +770,14 @@ onMounted(async () => {
   max-width: 360px;
   overflow: hidden;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 10px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .region-cell {
   color: var(--text);
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .status {
@@ -788,7 +788,7 @@ onMounted(async () => {
   gap: 6px;
   background: #f3f0f2;
   color: #837980;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .status i {
@@ -809,7 +809,7 @@ onMounted(async () => {
 
 .featured {
   color: #a06c21;
-  font-size: 8px;
+  font-size: 14px;
   font-weight: 650;
 }
 

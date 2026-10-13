@@ -1,7 +1,21 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { HydratedDocument } from 'mongoose'
+import {
+  Prop,
+  Schema,
+  SchemaFactory,
+} from '@nestjs/mongoose'
 
-export type AdminDocument = HydratedDocument<Admin>
+import {
+  HydratedDocument,
+} from 'mongoose'
+
+export type AdminDocument =
+  HydratedDocument<Admin>
+
+export enum AdminStatus {
+  INVITED = 'invited',
+  ACTIVE = 'active',
+  DISABLED = 'disabled',
+}
 
 @Schema({
   timestamps: true,
@@ -9,12 +23,14 @@ export type AdminDocument = HydratedDocument<Admin>
 })
 export class Admin {
   @Prop({
+    type: String,
     required: true,
     trim: true,
   })
   name!: string
 
   @Prop({
+    type: String,
     required: true,
     unique: true,
     lowercase: true,
@@ -24,26 +40,51 @@ export class Admin {
   email!: string
 
   @Prop({
-    required: true,
+    type: String,
+    default: null,
     select: false,
   })
-  passwordHash!: string
+  passwordHash?: string | null
 
   @Prop({
+    type: Boolean,
     default: true,
   })
   isActive!: boolean
 
   @Prop({
-    default: null,
+    type: String,
+    enum: Object.values(AdminStatus),
+    default: AdminStatus.ACTIVE,
+    index: true,
   })
-  lastLoginAt?: Date
+  status!: AdminStatus
 
   @Prop({
+    type: String,
     default: null,
     select: false,
   })
-  refreshTokenHash?: string
+  inviteTokenHash?: string | null
+
+  @Prop({
+    type: Date,
+    default: null,
+  })
+  inviteExpiresAt?: Date | null
+
+  @Prop({
+    type: Date,
+    default: null,
+  })
+  lastLoginAt?: Date | null
+
+  @Prop({
+    type: String,
+    default: null,
+    select: false,
+  })
+  refreshTokenHash?: string | null
 }
 
 export const AdminSchema =

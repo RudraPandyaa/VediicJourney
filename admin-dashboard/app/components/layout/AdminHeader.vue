@@ -102,7 +102,7 @@ const initials = computed(() => {
 .context {
   margin: 0;
   color: var(--brand-dark);
-  font-size: 10px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.16em;
 }
@@ -110,7 +110,7 @@ const initials = computed(() => {
 .context-subtitle {
   margin: 5px 0 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .header-right,
@@ -169,13 +169,13 @@ const initials = computed(() => {
 
 .admin-details strong {
   color: var(--text);
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .admin-details span {
   margin-top: 3px;
   color: var(--muted);
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .logout {
@@ -184,7 +184,7 @@ const initials = computed(() => {
   border-radius: 8px;
   background: white;
   color: var(--text);
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 600;
 }
 

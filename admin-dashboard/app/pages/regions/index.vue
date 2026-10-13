@@ -546,7 +546,7 @@ onMounted(fetchRegions)
   background: var(--brand-gradient);
   color: white;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
   box-shadow:
     0 10px 24px
@@ -570,7 +570,7 @@ onMounted(fetchRegions)
 
 .summary-grid span {
   color: var(--muted);
-  font-size: 8px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.13em;
 }
@@ -617,7 +617,7 @@ onMounted(fetchRegions)
   outline: none;
   background: var(--surface-soft);
   font: inherit;
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .filters {
@@ -635,7 +635,7 @@ onMounted(fetchRegions)
   background: transparent;
   color: var(--muted);
   cursor: pointer;
-  font-size: 8px;
+  font-size: 14px;
   font-weight: 650;
 }
 
@@ -671,7 +671,7 @@ onMounted(fetchRegions)
   border-bottom: 1px solid var(--border);
   background: #fbf9fa;
   color: #8f858d;
-  font-size: 7px;
+  font-size: 14px;
   font-weight: 750;
   letter-spacing: 0.16em;
 }
@@ -722,13 +722,13 @@ onMounted(fetchRegions)
 
 .region-info strong {
   color: var(--text);
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .region-info p {
   margin: 3px 0;
   color: var(--brand-dark);
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .region-info small {
@@ -736,7 +736,7 @@ onMounted(fetchRegions)
   max-width: 390px;
   overflow: hidden;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -749,7 +749,7 @@ onMounted(fetchRegions)
   gap: 6px;
   background: #f3f0f2;
   color: #837980;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -771,7 +771,7 @@ onMounted(fetchRegions)
 
 .order {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 14px;
 }
 
 .actions {
@@ -792,7 +792,7 @@ onMounted(fetchRegions)
 .edit-button {
   padding: 0 12px;
   color: var(--text);
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 650;
 }
 

@@ -11,7 +11,6 @@ import { JwtStrategy } from './strategies/jwt.strategy'
     AdminsModule,
     PassportModule,
     JwtModule.register({}),
-    AuthModule,
   ],
 
   controllers: [AuthController],
