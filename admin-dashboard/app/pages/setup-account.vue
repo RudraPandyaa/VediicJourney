@@ -16,10 +16,22 @@ const token = computed(() => {
 
 const password = ref('')
 const confirmPassword = ref('')
-
+const showPassword = ref(false)
+const showConfirmPassword = ref(false)
 const loading = ref(false)
 const success = ref(false)
 const error = ref('')
+
+const passwordsMatch = computed(() => {
+  if (!confirmPassword.value) {
+    return null
+  }
+
+  return (
+    password.value ===
+    confirmPassword.value
+  )
+})
 
 const submit = async () => {
   error.value = ''
@@ -136,34 +148,119 @@ const submit = async () => {
           @submit.prevent="submit"
         >
           <div class="field">
-            <label for="password">
-              Password
-            </label>
+              <label for="password">
+                Password
+              </label>
 
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              autocomplete="new-password"
-              placeholder="Minimum 8 characters"
-              required
-            >
-          </div>
+              <div class="password-input">
+                <input
+                  id="password"
+                  v-model="password"
+                  :type="
+                    showPassword
+                      ? 'text'
+                      : 'password'
+                  "
+                  autocomplete="new-password"
+                  placeholder="Minimum 8 characters"
+                  required
+                >
 
-          <div class="field">
-            <label for="confirm-password">
-              Confirm password
-            </label>
+             <button
+                type="button"
+                class="eye-button"
+                :aria-label="
+                  showPassword
+                    ? 'Hide password'
+                    : 'Show password'
+                "
+                @click="
+                  showPassword = !showPassword
+                "
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path
+                    d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
+                  />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+              </div>
+            </div>
 
-            <input
-              id="confirm-password"
-              v-model="confirmPassword"
-              type="password"
-              autocomplete="new-password"
-              placeholder="Enter password again"
-              required
-            >
-          </div>
+            <div class="field">
+              <label for="confirm-password">
+                Confirm password
+              </label>
+
+              <div class="password-input">
+                <input
+                  id="confirm-password"
+                  v-model="confirmPassword"
+                  :type="
+                    showConfirmPassword
+                      ? 'text'
+                      : 'password'
+                  "
+                  autocomplete="new-password"
+                  placeholder="Enter password again"
+                  required
+                >
+
+                <button
+                  type="button"
+                  class="eye-button"
+                  :aria-label="
+                    showConfirmPassword
+                      ? 'Hide password'
+                      : 'Show password'
+                  "
+                  @click="
+                    showConfirmPassword =
+                      !showConfirmPassword
+                  "
+                >
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
+                    />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                </button>
+              </div>
+
+              <p
+                v-if="passwordsMatch === true"
+                class="password-status match"
+              >
+                ✓ Passwords match
+              </p>
+
+              <p
+                v-else-if="passwordsMatch === false"
+                class="password-status mismatch"
+              >
+                ✕ Passwords don't match
+              </p>
+            </div>
 
           <div
             v-if="error"
@@ -421,6 +518,59 @@ h1 {
 
   font-size: 25px;
   font-weight: 800;
+}
+
+.password-input {
+  position: relative;
+}
+
+.password-input input {
+  padding-right: 50px;
+}
+
+.eye-button {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+
+  width: 34px;
+  height: 34px;
+
+  display: grid;
+  place-items: center;
+
+  transform: translateY(-50%);
+
+  border: 0;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #80777f;
+
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+.eye-button:hover {
+  background: #f7f5f4;
+  color: #a20eac;
+}
+
+.password-status {
+  margin: 8px 0 0;
+
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.password-status.match {
+  color: #328462;
+}
+
+.password-status.mismatch {
+  color: #b94a55;
 }
 
 @media (max-width: 600px) {

@@ -76,12 +76,15 @@ export class EmailService {
            * after domain verification.
            */
           from: {
-            name: 'Vedic Journey',
+            name:
+              this.configService.getOrThrow<string>(
+                'BREVO_FROM_NAME',
+              ),
+
             address:
-              this.configService
-                .getOrThrow<string>(
-                  'BREVO_SMTP_USER',
-                ),
+              this.configService.getOrThrow<string>(
+                'BREVO_FROM_EMAIL',
+              ),
           },
 
           to: params.email,
@@ -99,14 +102,17 @@ export class EmailService {
                 color: #211d21;
               "
             >
-              <div
-                style="
-                  margin-bottom: 32px;
-                  font-size: 22px;
-                  font-weight: 700;
-                "
-              >
-                VEDIC JOURNEY
+              <div style="margin-bottom: 32px;">
+                <img
+                  src="https://res.cloudinary.com/oyrw2mrv/image/upload/v1791807602/vedic-journey/kfjaek2knl3ipv0ysebz.png"
+                  alt="Vedic Journey"
+                  width="180"
+                  style="
+                    display: block;
+                    width: 180px;
+                    height: auto;
+                  "
+                />
               </div>
 
               <h1

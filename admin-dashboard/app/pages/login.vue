@@ -405,7 +405,7 @@ const handleLogin = async () => {
 .brand-eyebrow {
   margin: 0 0 20px;
   color: #e721c5;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.26em;
 }
@@ -419,7 +419,7 @@ const handleLogin = async () => {
     serif;
   font-size: clamp(46px, 4.8vw, 76px);
   font-weight: 400;
-  line-height: 0.99;
+  line-height: 1.4;
   letter-spacing: -0.045em;
 }
 
@@ -442,7 +442,7 @@ const handleLogin = async () => {
   max-width: 540px;
   margin: 27px 0 0;
   color: rgba(255, 255, 255, 0.58);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.8;
 }
 
@@ -465,7 +465,7 @@ const handleLogin = async () => {
 
 .brand-footer small {
   color: #e51ac4;
-  font-size: 8px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.22em;
 }
@@ -473,7 +473,7 @@ const handleLogin = async () => {
 .brand-footer p {
   margin: 5px 0 0;
   color: rgba(255, 255, 255, 0.55);
-  font-size: 11px;
+  font-size: 14px;
 }
 
 .lotus-decoration {
@@ -548,7 +548,7 @@ const handleLogin = async () => {
   gap: 7px;
   background: rgba(216, 11, 185, 0.04);
   color: #8d168d;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.18em;
 }
@@ -579,7 +579,7 @@ const handleLogin = async () => {
   max-width: 370px;
   margin: 13px 0 37px;
   color: #857b83;
-  font-size: 13px;
+  font-size: 16px;
   line-height: 1.7;
 }
 
@@ -592,7 +592,7 @@ const handleLogin = async () => {
 .field label {
   display: block;
   color: #453e44;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 650;
 }
 
@@ -617,7 +617,7 @@ const handleLogin = async () => {
   left: 16px;
   z-index: 1;
   color: #a49aa2;
-  font-size: 12px;
+  font-size: 16px;
   transform: translateY(-50%);
   transition: color 0.2s ease;
 }
@@ -632,7 +632,7 @@ const handleLogin = async () => {
   background: rgba(255, 255, 255, 0.82);
   color: #241e23;
   font: inherit;
-  font-size: 12px;
+  font-size: 16px;
   box-shadow:
     0 5px 20px
     rgba(43, 22, 39, 0.025);
@@ -671,7 +671,7 @@ const handleLogin = async () => {
   background: transparent;
   color: #9b2596;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
   transform: translateY(-50%);
 }
@@ -728,7 +728,7 @@ const handleLogin = async () => {
   background-size: 160% 100%;
   color: white;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.02em;
   box-shadow:
@@ -802,12 +802,13 @@ const handleLogin = async () => {
   justify-content: center;
   gap: 8px;
   color: #9d949b;
-  font-size: 9px;
+  font-size: 16px;
   letter-spacing: 0.04em;
 }
 
 .security-icon {
   color: #b40ca2;
+  font-size: 16px;
 }
 
 .login-footer {
@@ -819,7 +820,7 @@ const handleLogin = async () => {
   justify-content: center;
   gap: 8px;
   color: #aaa1a8;
-  font-size: 9px;
+  font-size: 16px;
 }
 
 .footer-dot {
