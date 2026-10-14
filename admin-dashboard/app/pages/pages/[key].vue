@@ -89,12 +89,13 @@
 
             <!-- HOME -->
             <template v-if="pageKey === 'home'">
+              <!-- 01 HERO -->
               <div class="section-block">
                 <div class="section-title">
                   <span>01</span>
                   <div>
                     <h3>Hero Section</h3>
-                    <p>Main homepage introduction.</p>
+                    <p>Main homepage introduction and hero media.</p>
                   </div>
                 </div>
 
@@ -103,16 +104,16 @@
                   <input
                     v-model="form.content.hero.eyebrow"
                     type="text"
-                    placeholder="Bespoke journeys across the world"
+                    placeholder="Bespoke journeys, thoughtfully designed"
                   />
                 </div>
 
                 <div class="field">
-                  <label>Heading</label>
+                  <label>Title</label>
                   <input
-                    v-model="form.content.hero.heading"
+                    v-model="form.content.hero.title"
                     type="text"
-                    placeholder="Travel, thoughtfully redefined"
+                    placeholder="Travel beyond the ordinary"
                   />
                 </div>
 
@@ -121,7 +122,6 @@
                   <textarea
                     v-model="form.content.hero.description"
                     rows="4"
-                    placeholder="Homepage hero introduction..."
                   />
                 </div>
 
@@ -129,7 +129,7 @@
                   <div class="field">
                     <label>CTA Label</label>
                     <input
-                      v-model="form.content.hero.ctaLabel"
+                      v-model="form.content.hero.primaryCta.label"
                       type="text"
                       placeholder="Plan Your Journey"
                     />
@@ -138,46 +138,32 @@
                   <div class="field">
                     <label>CTA Link</label>
                     <input
-                      v-model="form.content.hero.ctaLink"
+                      v-model="form.content.hero.primaryCta.href"
                       type="text"
                       placeholder="/contact"
                     />
                   </div>
                 </div>
+
+                <div class="field">
+                  <label>Hero Video</label>
+
+                  <button
+                    type="button"
+                    class="media-select"
+                    @click="openHomeMediaPicker('heroVideo', 'video')"
+                  >
+                    {{ form.content.hero.video
+                      ? 'Change Hero Video'
+                      : '+ Select Hero Video' }}
+                  </button>
+                </div>
               </div>
 
+              <!-- 02 DESTINATIONS -->
               <div class="section-block">
                 <div class="section-title">
                   <span>02</span>
-                  <div>
-                    <h3>Featured Journeys</h3>
-                    <p>
-                      Copy displayed above dynamically selected journeys.
-                    </p>
-                  </div>
-                </div>
-
-                <div class="field">
-                  <label>Heading</label>
-                  <input
-                    v-model="form.content.featuredJourneys.heading"
-                    type="text"
-                    placeholder="Journeys worth taking"
-                  />
-                </div>
-
-                <div class="field">
-                  <label>Description</label>
-                  <textarea
-                    v-model="form.content.featuredJourneys.description"
-                    rows="3"
-                  />
-                </div>
-              </div>
-
-              <div class="section-block">
-                <div class="section-title">
-                  <span>03</span>
                   <div>
                     <h3>Destinations</h3>
                     <p>Homepage destination discovery section.</p>
@@ -185,9 +171,17 @@
                 </div>
 
                 <div class="field">
-                  <label>Heading</label>
+                  <label>Eyebrow</label>
                   <input
-                    v-model="form.content.destinations.heading"
+                    v-model="form.content.destinations.eyebrow"
+                    type="text"
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Title</label>
+                  <input
+                    v-model="form.content.destinations.title"
                     type="text"
                   />
                 </div>
@@ -196,104 +190,407 @@
                   <label>Description</label>
                   <textarea
                     v-model="form.content.destinations.description"
-                    rows="3"
+                    rows="4"
                   />
+                </div>
+
+                <div class="field">
+                  <label>Featured Region Slugs</label>
+                  <input
+                    :value="form.content.destinations.featuredRegionSlugs.join(', ')"
+                    type="text"
+                    placeholder="asia, europe, africa"
+                    @input="
+                      form.content.destinations.featuredRegionSlugs =
+                        splitCommaList(($event.target as HTMLInputElement).value)
+                    "
+                  />
+                  <small>Comma-separated region slugs.</small>
                 </div>
               </div>
 
+              <!-- 03 EXPERIENCES -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>03</span>
+                  <div>
+                    <h3>Experiences</h3>
+                    <p>Homepage experience discovery configuration.</p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Title</label>
+                  <input
+                    v-model="form.content.experiences.title"
+                    type="text"
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Featured Experience Slugs</label>
+                  <input
+                    :value="form.content.experiences.featuredExperienceSlugs.join(', ')"
+                    type="text"
+                    placeholder="spiritual, wellness, adventure"
+                    @input="
+                      form.content.experiences.featuredExperienceSlugs =
+                        splitCommaList(($event.target as HTMLInputElement).value)
+                    "
+                  />
+                  <small>Comma-separated experience slugs.</small>
+                </div>
+              </div>
+
+              <!-- 04 INDIA SPOTLIGHT -->
               <div class="section-block">
                 <div class="section-title">
                   <span>04</span>
                   <div>
-                    <h3>Experiences</h3>
-                    <p>Homepage experience discovery section.</p>
+                    <h3>India Spotlight</h3>
+                    <p>India feature section displayed on the homepage.</p>
                   </div>
                 </div>
 
                 <div class="field">
-                  <label>Heading</label>
+                  <label>Label</label>
                   <input
-                    v-model="form.content.experiences.heading"
+                    v-model="form.content.indiaSpotlight.label"
                     type="text"
                   />
                 </div>
 
                 <div class="field">
-                  <label>Description</label>
+                  <label>Description — Paragraph 1</label>
                   <textarea
-                    v-model="form.content.experiences.description"
-                    rows="3"
-                  />
-                </div>
-              </div>
-
-              <div class="section-block">
-                <div class="section-title">
-                  <span>05</span>
-                  <div>
-                    <h3>Brand Story</h3>
-                    <p>Short Vedic Journey introduction.</p>
-                  </div>
-                </div>
-
-                <div class="field">
-                  <label>Heading</label>
-                  <input
-                    v-model="form.content.story.heading"
-                    type="text"
-                  />
-                </div>
-
-                <div class="field">
-                  <label>Description</label>
-                  <textarea
-                    v-model="form.content.story.description"
+                    v-model="form.content.indiaSpotlight.description[0]"
                     rows="5"
                   />
                 </div>
-              </div>
-
-              <div class="section-block">
-                <div class="section-title">
-                  <span>06</span>
-                  <div>
-                    <h3>Final CTA</h3>
-                    <p>Closing journey planning call-to-action.</p>
-                  </div>
-                </div>
 
                 <div class="field">
-                  <label>Heading</label>
-                  <input
-                    v-model="form.content.cta.heading"
-                    type="text"
-                  />
-                </div>
-
-                <div class="field">
-                  <label>Description</label>
+                  <label>Description — Paragraph 2</label>
                   <textarea
-                    v-model="form.content.cta.description"
-                    rows="3"
+                    v-model="form.content.indiaSpotlight.description[1]"
+                    rows="5"
                   />
                 </div>
 
                 <div class="two-column">
                   <div class="field">
-                    <label>Button Label</label>
+                    <label>CTA Label</label>
                     <input
-                      v-model="form.content.cta.label"
+                      v-model="form.content.indiaSpotlight.cta.label"
                       type="text"
                     />
                   </div>
 
                   <div class="field">
-                    <label>Button Link</label>
+                    <label>CTA Link</label>
                     <input
-                      v-model="form.content.cta.link"
+                      v-model="form.content.indiaSpotlight.cta.href"
                       type="text"
                     />
                   </div>
+                </div>
+
+                <div class="field">
+                  <label>Display Lines</label>
+                  <input
+                    :value="form.content.indiaSpotlight.displayLines.join(', ')"
+                    type="text"
+                    placeholder="LET'S, EXPERIENCE, INDIA..."
+                    @input="
+                      form.content.indiaSpotlight.displayLines =
+                        splitCommaList(($event.target as HTMLInputElement).value)
+                    "
+                  />
+                  <small>Comma-separated animated display lines.</small>
+                </div>
+
+                <div class="field">
+                  <label>India Spotlight Video</label>
+
+                  <button
+                    type="button"
+                    class="media-select"
+                    @click="openHomeMediaPicker('indiaVideo', 'video')"
+                  >
+                    {{
+                      form.content.indiaSpotlight.video
+                        ? 'Change Video'
+                        : '+ Select Video'
+                    }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- 05 REGION SHOWCASE -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>05</span>
+                  <div>
+                    <h3>Region Showcase</h3>
+                    <p>Animated region showcase configuration.</p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Display Lines</label>
+                  <input
+                    :value="form.content.journeys.displayLines.join(', ')"
+                    type="text"
+                    @input="
+                      form.content.journeys.displayLines =
+                        splitCommaList(($event.target as HTMLInputElement).value)
+                    "
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Featured Region Slugs</label>
+                  <input
+                    :value="form.content.journeys.featuredRegionSlugs.join(', ')"
+                    type="text"
+                    placeholder="europe, africa, asia, south-america"
+                    @input="
+                      form.content.journeys.featuredRegionSlugs =
+                        splitCommaList(($event.target as HTMLInputElement).value)
+                    "
+                  />
+                </div>
+              </div>
+
+              <!-- 06 PHILOSOPHY -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>06</span>
+                  <div>
+                    <h3>Philosophy</h3>
+                    <p>Vedic Journey philosophy section.</p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Eyebrow</label>
+                  <input
+                    v-model="form.content.philosophy.eyebrow"
+                    type="text"
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Title</label>
+                  <input
+                    v-model="form.content.philosophy.title"
+                    type="text"
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Description</label>
+                  <textarea
+                    v-model="form.content.philosophy.description"
+                    rows="5"
+                  />
+                </div>
+
+                <div class="two-column">
+                  <div class="field">
+                    <label>CTA Label</label>
+                    <input
+                      v-model="form.content.philosophy.cta.label"
+                      type="text"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label>CTA Link</label>
+                    <input
+                      v-model="form.content.philosophy.cta.href"
+                      type="text"
+                    />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Philosophy Image</label>
+
+                  <button
+                    type="button"
+                    class="media-select"
+                    @click="openHomeMediaPicker('philosophyImage', 'image')"
+                  >
+                    {{
+                      form.content.philosophy.image
+                        ? 'Change Philosophy Image'
+                        : '+ Select Image'
+                    }}
+                  </button>
+                </div>
+              </div>
+              <!-- 07 WHY CHOOSE US -->
+
+              <div class="section-block">
+                <div class="section-title">
+                  <span>07</span>
+
+                  <div>
+                    <h3>Why Choose Us</h3>
+                    <p>
+                      Manage the four reasons travellers choose Vedic Journey.
+                    </p>
+                  </div>
+                </div>
+
+                <div
+                  v-for="(item, index) in form.content.whyVedic.items"
+                  :key="index"
+                  class="nested-item"
+                >
+                  <div class="field">
+                    <label>
+                      Reason {{ Number(index) + 1 }} Title
+                    </label>
+
+                    <input
+                      v-model="item.title"
+                      type="text"
+                      :placeholder="`Reason ${Number(index) + 1} title`"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label>Description</label>
+
+                    <textarea
+                      v-model="item.description"
+                      rows="3"
+                      :placeholder="`Reason ${Number(index) + 1} description`"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 08 TRAVEL SUPPORT -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>08</span>
+                  <div>
+                    <h3>Travel Support</h3>
+                    <p>Homepage travel assistance and support section.</p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Title</label>
+                  <input
+                    v-model="form.content.travelSupport.title"
+                    type="text"
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Description</label>
+                  <textarea
+                    v-model="form.content.travelSupport.description"
+                    rows="4"
+                  />
+                </div>
+
+                <div
+                  v-for="(service, index) in form.content.travelSupport.services"
+                  :key="index"
+                  class="nested-item"
+                >
+                  <div class="two-column">
+                    <div class="field">
+                      <label>Service {{ Number(index)  + 1 }} Title</label>
+                      <input v-model="service.title" type="text" />
+                    </div>
+
+                    <div class="field">
+                      <label>Slug</label>
+                      <input v-model="service.slug" type="text" />
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label>Description</label>
+                    <textarea
+                      v-model="service.description"
+                      rows="3"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label>Service Image</label>
+
+                    <button
+                      type="button"
+                      class="media-select"
+                      @click="
+                        openHomeMediaPicker(
+                          `supportImage:${Number(index)}`,
+                          'image',
+                        )
+                      "
+                    >
+                      {{
+                        service.image
+                          ? 'Change Service Image'
+                          : '+ Select Image'
+                      }}
+                    </button>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>CTA Title</label>
+                  <input
+                    v-model="form.content.travelSupport.cta.title"
+                    type="text"
+                  />
+                </div>
+
+                <div class="two-column">
+                  <div class="field">
+                    <label>CTA Label</label>
+                    <input
+                      v-model="form.content.travelSupport.cta.label"
+                      type="text"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label>CTA Link</label>
+                    <input
+                      v-model="form.content.travelSupport.cta.href"
+                      type="text"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 09 CERTIFICATES -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>09</span>
+                  <div>
+                    <h3>Certificates</h3>
+                    <p>
+                      Homepage certificate section heading. Certificate cards come
+                      from the Certificates collection.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Title</label>
+                  <input
+                    v-model="form.content.certificates.title"
+                    type="text"
+                  />
                 </div>
               </div>
             </template>
@@ -665,6 +962,19 @@
         @select="selectOgImage"
       />
     </ClientOnly>
+    <ClientOnly>
+      <MediaPickerModal
+        :open="homeMediaPickerOpen"
+        :type="homeMediaType"
+        :title="
+          homeMediaType === 'video'
+            ? 'Select video'
+            : 'Select image'
+        "
+        @close="homeMediaPickerOpen = false"
+        @select="selectHomeMedia"
+      />
+    </ClientOnly>
   </div>
 </template>
 
@@ -679,6 +989,8 @@ definePageMeta({
 
 interface MediaItem {
   _id: string
+  type?: 'image' | 'video'
+  filename?: string
   url: string
   altText?: string
 }
@@ -711,37 +1023,123 @@ const saveSuccess = ref(false)
 const mediaPickerOpen = ref(false)
 const selectedOgImage = ref<MediaItem | null>(null)
 
+  type HomeMediaTarget =
+  | 'heroVideo'
+  | 'indiaVideo'
+  | 'philosophyImage'
+  | `supportImage:${number}`
+
+const homeMediaPickerOpen = ref(false)
+const homeMediaTarget = ref<HomeMediaTarget | null>(null)
+const homeMediaType = ref<'image' | 'video'>('image')
+
+const openHomeMediaPicker = (
+  target: HomeMediaTarget,
+  type: 'image' | 'video',
+) => {
+  homeMediaTarget.value = target
+  homeMediaType.value = type
+  homeMediaPickerOpen.value = true
+}
+
+const selectHomeMedia = (items: MediaItem[]) => {
+  const media = items[0]
+  const target = homeMediaTarget.value
+
+  if (!media || !target) return
+
+  if (target === 'heroVideo') {
+    form.content.hero.video = media._id
+  } else if (target === 'indiaVideo') {
+    form.content.indiaSpotlight.video = media._id
+  } else if (target === 'philosophyImage') {
+    form.content.philosophy.image = media._id
+  } else if (target.startsWith('supportImage:')) {
+    const index = Number(
+      target.split(':')[1],
+    )
+
+    const service =
+      form.content.travelSupport.services[index]
+
+    if (service) {
+      service.image = media._id
+    }
+  }
+
+  homeMediaPickerOpen.value = false
+  homeMediaTarget.value = null
+}
+
 const createDefaultContent = (key: string) => {
   if (key === 'home') {
     return {
       hero: {
         eyebrow: '',
-        heading: '',
+        title: '',
         description: '',
-        ctaLabel: '',
-        ctaLink: '',
+        primaryCta: {
+          label: '',
+          href: '',
+        },
+        video: '',
       },
-      featuredJourneys: {
-        heading: '',
-        description: '',
-      },
+
       destinations: {
-        heading: '',
+        eyebrow: '',
+        title: '',
         description: '',
+        featuredRegionSlugs: [],
       },
+
       experiences: {
-        heading: '',
-        description: '',
+        title: '',
+        featuredExperienceSlugs: [],
       },
-      story: {
-        heading: '',
-        description: '',
-      },
-      cta: {
-        heading: '',
-        description: '',
+
+      indiaSpotlight: {
         label: '',
-        link: '',
+        description: ['', ''],
+        cta: {
+          label: '',
+          href: '',
+        },
+        displayLines: [],
+        video: '',
+      },
+
+      journeys: {
+        displayLines: [],
+        featuredRegionSlugs: [],
+      },
+
+      philosophy: {
+        eyebrow: '',
+        title: '',
+        description: '',
+        cta: {
+          label: '',
+          href: '',
+        },
+        image: '',
+      },
+
+    whyVedic: {
+      items: [],
+    },
+      travelSupport: {
+        title: '',
+        description: '',
+        services: [],
+        cta: {
+          title: '',
+          label: '',
+          href: '',
+        },
+      },
+
+      certificates: {
+        title: '',
       },
     }
   }
@@ -819,6 +1217,12 @@ const pageLabel = computed(() => {
   return labels[pageKey.value] || 'Page'
 })
 
+const splitCommaList = (value: string) =>
+  value
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+
 const mergeContent = (
   defaults: Record<string, any>,
   saved: Record<string, any>,
@@ -863,6 +1267,32 @@ const loadPage = async () => {
       data.content || {},
     )
 
+        if (pageKey.value === 'home') {
+      const mediaId = (value: any) => {
+        if (!value) return ''
+        if (typeof value === 'string') return value
+        return value?._id || ''
+      }
+
+      form.content.hero.video =
+        mediaId(form.content.hero.video)
+
+      form.content.indiaSpotlight.video =
+        mediaId(form.content.indiaSpotlight.video)
+
+      form.content.philosophy.image =
+        mediaId(form.content.philosophy.image)
+
+
+      form.content.travelSupport.services =
+        (form.content.travelSupport.services || []).map(
+          (service: any) => ({
+            ...service,
+            image: mediaId(service.image),
+          }),
+        )
+    }
+
     form.seo.title = data.seo?.title || ''
     form.seo.description = data.seo?.description || ''
 
@@ -893,6 +1323,8 @@ const loadPage = async () => {
   }
 }
 
+
+
 const selectOgImage = (
   items: MediaItem[],
 ) => {
@@ -912,6 +1344,12 @@ const savePage = async () => {
   saveError.value = null
   saveSuccess.value = false
 
+  if (pageKey.value === 'home') {
+    delete form.content.whyVedic?.eyebrow
+    delete form.content.whyVedic?.title
+    delete form.content.whyVedic?.image
+  }
+
   try {
     const seo: Record<string, string> = {
       title: form.seo.title.trim(),
@@ -923,15 +1361,15 @@ const savePage = async () => {
     }
 
     const updated = await updatePage(
-    pageKey.value,
-    {
+      pageKey.value,
+      {
         title: form.title.trim(),
         content: JSON.parse(
-        JSON.stringify(form.content),
+          JSON.stringify(form.content),
         ),
         seo,
         isPublished: form.isPublished,
-    },
+      },
     )
 
     page.value = updated

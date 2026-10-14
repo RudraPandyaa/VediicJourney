@@ -204,6 +204,39 @@ export class MediaService {
     }
   }
 
+  private containsMediaId(
+    value: unknown,
+    id: string,
+  ): boolean {
+    if (value == null) {
+      return false
+    }
+
+    if (value instanceof Types.ObjectId) {
+      return value.toString() === id
+    }
+
+    if (typeof value === 'string') {
+      return value === id
+    }
+
+    if (Array.isArray(value)) {
+      return value.some((item) =>
+        this.containsMediaId(item, id),
+      )
+    }
+
+    if (typeof value === 'object') {
+      return Object.values(
+        value as Record<string, unknown>,
+      ).some((item) =>
+        this.containsMediaId(item, id),
+      )
+    }
+
+    return false
+  }
+
   private async ensureMediaNotInUse(
     id: string,
   ) {
@@ -269,8 +302,37 @@ export class MediaService {
       }),
     ])
 
+    const pages =
+      await db
+        .collection('pages')
+        .find(
+          {},
+          {
+            projection: {
+              content: 1,
+              seo: 1,
+            },
+          },
+        )
+        .toArray()
+
+    const isUsedByPage =
+      pages.some((page) =>
+        this.containsMediaId(
+          page.content,
+          id,
+        ) ||
+        this.containsMediaId(
+          page.seo,
+          id,
+        ),
+      )
+
     const isInUse =
-      checks.some((count) => count > 0)
+      isUsedByPage ||
+      checks.some(
+        (count) => count > 0,
+      )
 
     if (isInUse) {
       throw new BadRequestException(

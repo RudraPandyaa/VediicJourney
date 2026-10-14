@@ -11,28 +11,32 @@
         </span>
 
         <span class="sr-only">
-          Discover the journey that's yours.
+            {{ philosophy.title }}
         </span>
       </h2>
 
       <!-- Intro -->
       <p class="philosophy__description body">
-        Tell us what inspires you, how you like to travel, and what
-        you want to experience. We'll turn your ideas into a
-        thoughtfully planned journey shaped around you.
+          {{ philosophy.description }}
       </p>
 
       <!-- CTA -->
-      <NuxtLink to="/contact" class="philosophy__link" aria-label="Plan your journey with Vedic Journey">
+      <NuxtLink
+        :to="philosophy.cta.href"
+        class="philosophy__link"
+        :aria-label="
+          philosophy.cta.ariaLabel ||
+          philosophy.cta.label
+        "
+      >
         <span class="philosophy__link-text">
-          Contact US
+          {{ philosophy.cta.label }}
         </span>
 
         <span class="philosophy__link-arrow">
           <Icon name="lucide:arrow-right" />
         </span>
       </NuxtLink>
-
     </div>
 
   </section>
@@ -42,10 +46,26 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+interface PhilosophyContent {
+  eyebrow?: string
+  title: string
+  description: string
+  cta: {
+    label: string
+    href: string
+    ariaLabel?: string
+  }
+}
+
+const props = defineProps<{
+  philosophy: PhilosophyContent
+}>()
+
 const sectionRef = ref<HTMLElement | null>(null)
 
-const headingText = "Discover the journey that's yours."
-const headingCharacters = headingText.split('')
+const headingCharacters = computed(() =>
+  props.philosophy.title.split('')
+)
 
 let ctx: gsap.Context | undefined
 

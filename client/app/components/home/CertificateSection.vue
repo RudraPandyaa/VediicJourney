@@ -1,27 +1,40 @@
 <template>
-  <section ref="sectionRef" class="certificates">
+  <section
+    v-if="certificates.length"
+    ref="sectionRef"
+    class="certificates"
+  >
     <div class="certificates__inner">
 
       <div class="certificates__heading-wrap">
         <h2 class="certificates__heading heading-xl">
-          Our Certificates
+          {{ certificateContent?.title || 'Our Certificates' }}
         </h2>
       </div>
 
       <div class="certificates__grid">
-        <div
+        <article
           v-for="certificate in certificates"
-          :key="certificate.id"
+          :key="certificate._id"
           class="certificates__item"
         >
-          <div class="certificates__image">
+          <div
+            v-if="certificate.image?.url"
+            class="certificates__image"
+          >
             <img
-              :src="certificate.image"
-              :alt="certificate.alt"
+              :src="certificate.image.url"
+              :alt="
+                certificate.image.altText ||
+                certificate.title ||
+                'Vedic Journey certificate'
+              "
               loading="lazy"
+              :width="certificate.image.width"
+              :height="certificate.image.height"
             />
           </div>
-        </div>
+        </article>
       </div>
 
     </div>
@@ -29,27 +42,36 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-const certificates = [
-  {
-    id: 1,
-    image: '/images/certificates/demo.png',
-    alt: 'Vedic Journey certificate'
-  },
-  {
-    id: 2,
-    image: '/images/certificates/demo.png',
-    alt: 'Vedic Journey certificate'
-  },
-  {
-    id: 3,
-    image: '/images/certificates/demo.png',
-    alt: 'Vedic Journey certificate'
-  }
-]
+interface CertificateMedia {
+  _id?: string
+  url: string
+  altText?: string
+  width?: number
+  height?: number
+}
+
+interface Certificate {
+  _id: string
+  title?: string
+  type?: string
+  organization?: string
+  description?: string
+  image?: CertificateMedia | null
+  externalUrl?: string
+  sortOrder?: number
+}
+
+interface CertificateContent {
+  title?: string
+}
+
+defineProps<{
+  certificateContent?: CertificateContent | null
+  certificates: Certificate[]
+}>()
 
 const sectionRef = ref<HTMLElement | null>(null)
 
@@ -60,6 +82,8 @@ onMounted(() => {
 
   if (!sectionRef.value) return
 
+  const section = sectionRef.value
+
   ctx = gsap.context(() => {
     gsap.from('.certificates__heading', {
       y: 35,
@@ -67,26 +91,34 @@ onMounted(() => {
       duration: 0.8,
       ease: 'power3.out',
       scrollTrigger: {
-        trigger: sectionRef.value,
-        start: 'top 82%'
+        trigger: section,
+        start: 'top 82%',
+        once: true
       }
     })
 
-    gsap.from('.certificates__item', {
-      y: 35,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.12,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: '.certificates__grid',
-        start: 'top 82%'
-      }
-    })
-  }, sectionRef.value)
+    const grid = section.querySelector(
+      '.certificates__grid'
+    )
+
+    if (grid) {
+      gsap.from('.certificates__item', {
+        y: 35,
+        opacity: 0,
+        duration: 0.8,
+        stagger: 0.12,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: grid,
+          start: 'top 82%',
+          once: true
+        }
+      })
+    }
+  }, section)
 })
 
-onUnmounted(() => {
+onBeforeUnmount(() => {
   ctx?.revert()
 })
 </script>

@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-
+import {
+  Media,
+  MediaSchema,
+} from '../media/schemas/media.schema'
 import {
   Page,
   PageSchema,
@@ -25,7 +28,11 @@ import {
         name: Page.name,
         schema: PageSchema,
       },
-    ]),
+      {
+        name: Media.name,
+        schema: MediaSchema,
+      },
+    ])
   ],
 
   controllers: [

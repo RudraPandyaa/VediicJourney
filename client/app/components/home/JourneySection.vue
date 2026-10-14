@@ -11,40 +11,69 @@ interface Journey {
   image: string
 }
 
-const journeys: Journey[] = [
-  {
-    title: 'Europe',
-    slug: 'europe',
-    region: 'Europe',
-    duration: '',
-    route: '',
-    image: '/images/destinations/europe.jpg'
-  },
-  {
-    title: 'South Africa',
-    slug: 'south-africa',
-    region: 'South Africa',
-    duration: '',
-    route: '',
-    image: '/images/destinations/south-africa.jpg'
-  },
-  {
-    title: 'Asia',
-    slug: 'asia',
-    region: 'Asia',
-    duration: '',
-    route: '',
-    image: '/images/destinations/asia.jpg'
-  },
-  {
-    title: 'South America',
-    slug: 'south-america',
-    region: 'South America',
-    duration: '',
-    route: '',
-    image: '/images/destinations/south-america.jpg'
+interface MediaItem {
+  _id: string
+  type: 'image' | 'video'
+  url: string
+  altText?: string
+}
+
+interface IndiaSpotlightContent {
+  label: string
+  description: string[]
+  cta: {
+    label: string
+    href: string
   }
-]
+  displayLines: string[]
+  video: MediaItem | null
+}
+
+interface JourneyContent {
+  displayLines: string[]
+  featuredRegionSlugs: string[]
+}
+
+interface Region {
+  _id: string
+  name: string
+  slug: string
+  shortDescription?: string
+  image: MediaItem | null
+  sortOrder?: number
+}
+
+const props = defineProps<{
+  indiaSpotlight: IndiaSpotlightContent
+  journeyContent: JourneyContent
+}>()
+
+const config = useRuntimeConfig()
+
+const { data: regionsResponse } = await useAsyncData(
+  'home-featured-regions',
+  () =>
+    $fetch<any>(
+      `${config.public.apiBase}/regions`,
+    ),
+)
+
+const allRegions = computed<Region[]>(() =>
+  regionsResponse.value?.data ?? [],
+)
+
+const journeys = computed(() => {
+  const slugs =
+    props.journeyContent.featuredRegionSlugs || []
+
+  return slugs
+    .map((slug) =>
+      allRegions.value.find(
+        (region) => region.slug === slug,
+      ),
+    )
+    .filter(Boolean) as Region[]
+})
 
 const sectionRef = ref<HTMLElement | null>(null)
 
@@ -386,31 +415,24 @@ onBeforeUnmount(() => {
         <div class="journeys__india-details">
 
           <p class="journeys__india-label">
-            THE SOUL OF INDIA
+              {{ indiaSpotlight.label }}
           </p>
 
           <div class="journeys__india-copy">
-
-            <p class="journeys__india-description">
-              India is a journey through ancient traditions,
-              living cultures, sacred landscapes and stories
-              that have travelled through generations. From
-              timeless cities and spiritual places to rich
-              flavours, vibrant communities and extraordinary
-              experiences, every journey reveals another side
-              of the country.
+            <p
+              v-for="(paragraph, index) in indiaSpotlight.description"
+              :key="index"
+              class="journeys__india-description"
+            >
+              {{ paragraph }}
             </p>
-
-            <p class="journeys__india-description">
-              Discover India beyond the familiar — thoughtfully,
-              slowly and through experiences that bring you
-              closer to its people, places and heritage.
-            </p>
-
           </div>
 
-          <NuxtLink to="/destinations/asia/india" class="journeys__india-cta">
-            <span>EXPLORE INDIA</span>
+          <NuxtLink
+            :to="indiaSpotlight.cta.href"
+            class="journeys__india-cta"
+          >
+            <span>{{ indiaSpotlight.cta.label }}</span>
             <Icon name="lucide:arrow-right" />
           </NuxtLink>
 
@@ -420,44 +442,38 @@ onBeforeUnmount(() => {
         <!-- RIGHT: VIDEO + BIG TYPOGRAPHY -->
         <div class="journeys__india-visual">
 
-          <video class="journeys__india-video" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
-            <source src="/videos/hero.mp4" type="video/mp4">
+          <video
+            v-if="indiaSpotlight.video?.url"
+            class="journeys__india-video"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-hidden="true"
+          >
+            <source
+              :src="indiaSpotlight.video.url"
+              :type="
+                indiaSpotlight.video.type === 'video'
+                  ? 'video/mp4'
+                  : undefined
+              "
+            >
           </video>
 
           <div class="journeys__india-video-overlay" />
 
           <div class="journeys__india-heading">
-
-            <span class="journeys__india-heading-line">
+            <span
+              v-for="(line, index) in indiaSpotlight.displayLines"
+              :key="index"
+              class="journeys__india-heading-line"
+            >
               <span class="journeys__india-heading-text">
-                LET'S
+                {{ line }}
               </span>
             </span>
-
-            <span class="journeys__india-heading-line">
-              <span class="journeys__india-heading-text">
-                EXPERIENCE
-              </span>
-            </span>
-
-            <span class="journeys__india-heading-line">
-              <span class="journeys__india-heading-text">
-                INDIA,
-              </span>
-            </span>
-
-            <span class="journeys__india-heading-line">
-              <span class="journeys__india-heading-text">
-                BEYOND
-              </span>
-            </span>
-
-            <span class="journeys__india-heading-line">
-              <span class="journeys__india-heading-text">
-                THE ORDINARY.
-              </span>
-            </span>
-
           </div>
 
         </div>
@@ -469,33 +485,13 @@ onBeforeUnmount(() => {
         <!-- LEFT: SECTION HEADING -->
         <header class="journeys__header">
           <h2 class="journeys__heading heading-xl">
-            <span class="journeys__heading-line">
+            <span
+              v-for="(line, index) in journeyContent.displayLines"
+              :key="index"
+              class="journeys__heading-line"
+            >
               <span class="journeys__heading-text">
-                LET'S
-              </span>
-            </span>
-
-            <span class="journeys__heading-line">
-              <span class="journeys__heading-text">
-                MAKE
-              </span>
-            </span>
-
-            <span class="journeys__heading-line">
-              <span class="journeys__heading-text">
-                SOMETHING
-              </span>
-            </span>
-
-            <span class="journeys__heading-line">
-              <span class="journeys__heading-text">
-                GREAT
-              </span>
-            </span>
-
-            <span class="journeys__heading-line">
-              <span class="journeys__heading-text">
-                TOGETHER!
+                {{ line }}
               </span>
             </span>
           </h2>
@@ -503,25 +499,43 @@ onBeforeUnmount(() => {
 
         <!-- RIGHT: DESTINATION CARDS -->
         <div class="journeys__grid">
-          <article v-for="(journey, index) in journeys" :key="journey.slug" class="journeys__card"
-            :class="`journeys__card--${index + 1}`">
-            <NuxtLink :to="`/destinations/${journey.slug}`" class="journeys__visual-link"
-              :aria-label="`Explore ${journey.title}`">
+          <article
+            v-for="(journey, index) in journeys"
+            :key="journey._id"
+            class="journeys__card"
+            :class="`journeys__card--${index + 1}`"
+          >
+            <NuxtLink
+              :to="`/destinations/${journey.slug}`"
+              class="journeys__visual-link"
+              :aria-label="`Explore ${journey.name}`"
+            >
               <div class="journeys__visual">
-                <img :src="journey.image" :alt="journey.title" class="journeys__image">
+                <img
+                  v-if="journey.image?.url"
+                  :src="journey.image.url"
+                  :alt="journey.image.altText || journey.name"
+                  class="journeys__image"
+                >
 
                 <div class="journeys__overlay" />
               </div>
             </NuxtLink>
 
             <div class="journeys__card-content">
-              <NuxtLink :to="`/destinations/${journey.slug}`" class="journeys__title-link">
+              <NuxtLink
+                :to="`/destinations/${journey.slug}`"
+                class="journeys__title-link"
+              >
                 <h3 class="journeys__title">
-                  {{ journey.title }}
+                  {{ journey.name }}
                 </h3>
               </NuxtLink>
 
-              <NuxtLink :to="`/destinations/${journey.slug}`" class="journeys__explore">
+              <NuxtLink
+                :to="`/destinations/${journey.slug}`"
+                class="journeys__explore"
+              >
                 <span>SEE MORE</span>
                 <Icon name="lucide:arrow-right" />
               </NuxtLink>

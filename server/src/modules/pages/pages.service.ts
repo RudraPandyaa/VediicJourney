@@ -3,7 +3,15 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { Model } from 'mongoose'
+import {
+  Model,
+  Types,
+} from 'mongoose'
+
+import {
+  Media,
+  MediaDocument,
+} from '../media/schemas/media.schema'
 
 import {
   Page,
@@ -39,6 +47,9 @@ export class PagesService {
     @InjectModel(Page.name)
     private readonly pageModel:
       Model<PageDocument>,
+    @InjectModel(Media.name)
+      private readonly mediaModel:
+      Model<MediaDocument>,
   ) {}
 
   private async ensureDefaultPages() {
@@ -206,25 +217,180 @@ export class PagesService {
     }
   }
 
+  private isObjectIdString(
+    value: unknown,
+  ): value is string {
+    return (
+      typeof value === 'string' &&
+      Types.ObjectId.isValid(value)
+    )
+  }
+
+  private collectMediaIds(
+    value: unknown,
+    ids: Set<string>,
+  ) {
+    if (this.isObjectIdString(value)) {
+      ids.add(value)
+      return
+    }
+
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        this.collectMediaIds(
+          item,
+          ids,
+        )
+      }
+
+      return
+    }
+
+    if (
+      value &&
+      typeof value === 'object'
+    ) {
+      for (
+        const nestedValue
+        of Object.values(
+          value as Record<
+            string,
+            unknown
+          >,
+        )
+      ) {
+        this.collectMediaIds(
+          nestedValue,
+          ids,
+        )
+      }
+    }
+  }
+
+  private replaceMediaIds(
+    value: unknown,
+    mediaMap: Map<
+      string,
+      Record<string, unknown>
+    >,
+  ): unknown {
+    if (this.isObjectIdString(value)) {
+      return (
+        mediaMap.get(value) ??
+        value
+      )
+    }
+
+    if (Array.isArray(value)) {
+      return value.map((item) =>
+        this.replaceMediaIds(
+          item,
+          mediaMap,
+        ),
+      )
+    }
+
+    if (
+      value &&
+      typeof value === 'object'
+    ) {
+      const result:
+        Record<string, unknown> = {}
+
+      for (
+        const [key, nestedValue]
+        of Object.entries(
+          value as Record<
+            string,
+            unknown
+          >,
+        )
+      ) {
+        result[key] =
+          this.replaceMediaIds(
+            nestedValue,
+            mediaMap,
+          )
+      }
+
+      return result
+    }
+
+    return value
+  }
+
+  private async hydrateContentMedia(
+    content: Record<string, unknown>,
+  ) {
+    const ids = new Set<string>()
+
+    this.collectMediaIds(
+      content,
+      ids,
+    )
+
+    if (!ids.size) {
+      return content
+    }
+
+    const media =
+      await this.mediaModel
+        .find({
+          _id: {
+            $in: Array.from(ids).map(
+              (id) =>
+                new Types.ObjectId(id),
+            ),
+          },
+        })
+        .select(
+          'type filename url altText width height',
+        )
+        .lean()
+        .exec()
+
+    const mediaMap =
+      new Map<
+        string,
+        Record<string, unknown>
+      >()
+
+    for (const item of media) {
+      mediaMap.set(
+        String(item._id),
+        item as unknown as Record<
+          string,
+          unknown
+        >,
+      )
+    }
+
+    return this.replaceMediaIds(
+      content,
+      mediaMap,
+    ) as Record<string, unknown>
+  }
+
   async findOnePublic(
     key: string,
   ) {
     await this.ensureDefaultPages()
 
-    const data = await this.pageModel
-      .findOne({
-        key: key.toLowerCase(),
-        isPublished: true,
-      })
-      .select(
-        'key title content seo updatedAt',
-      )
-      .populate(
-        'seo.ogImage',
-        'url altText width height',
-      )
-      .lean()
-      .exec()
+    const data =
+      await this.pageModel
+        .findOne({
+          key: key.toLowerCase(),
+          isPublished: true,
+        })
+        .select(
+          'key title content seo updatedAt',
+        )
+        .populate(
+          'seo.ogImage',
+          'url altText width height',
+        )
+        .lean()
+        .exec()
 
     if (!data) {
       throw new NotFoundException(
@@ -232,9 +398,18 @@ export class PagesService {
       )
     }
 
+    const hydratedContent =
+      await this.hydrateContentMedia(
+        data.content ?? {},
+      )
+
     return {
       success: true,
-      data,
+
+      data: {
+        ...data,
+        content: hydratedContent,
+      },
     }
   }
 }

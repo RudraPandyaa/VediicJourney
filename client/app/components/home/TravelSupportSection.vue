@@ -2,43 +2,40 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+
+interface MediaItem {
+  _id: string
+  url: string
+  altText?: string
+  width?: number
+  height?: number
+}
+
 interface Service {
   title: string
   slug: string
   description: string
-  image: string
+  image: MediaItem | null
 }
 
-const services: Service[] = [
-  {
-    title: 'Visa Assistance',
-    slug: 'visa',
-    description:
-      'Clear guidance through visa requirements and documentation, helping make the process feel straightforward from the start.',
-    image: '/images/support/visa.jpg'
-  },
-  {
-    title: 'Flights & Connections',
-    slug: 'flights',
-    description:
-      'Thoughtfully considered routes and connections designed around comfort, timing and the rhythm of your journey.',
-    image: '/images/support/flights.jpg'
-  },
-  {
-    title: 'Private Transfers',
-    slug: 'private-chauffeur',
-    description:
-      'Seamless arrivals, departures and private transfers arranged so every transition feels effortless.',
-    image: '/images/support/transfers.jpg'
-  },
-  {
-    title: 'On-ground Support',
-    slug: 'on-ground-support',
-    description:
-      'Personal assistance throughout your journey, with trusted local support whenever and wherever it is needed.',
-    image: '/images/support/support.jpg'
+interface TravelSupportContent {
+  title: string
+  description: string
+  services: Service[]
+  cta: {
+    title: string
+    label: string
+    href: string
   }
-]
+}
+
+const props = defineProps<{
+  travelSupport: TravelSupportContent
+}>()
+
+const services = computed(() =>
+  props.travelSupport.services || [],
+)
 
 const sectionRef = ref<HTMLElement | null>(null)
 
@@ -48,6 +45,7 @@ onMounted(() => {
   gsap.registerPlugin(ScrollTrigger)
 
   if (!sectionRef.value) return
+  const section = sectionRef.value
 
   ctx = gsap.context(() => {
     // ========================================================
@@ -111,7 +109,7 @@ onMounted(() => {
     // ========================================================
 
     const serviceCards =
-      sectionRef.value.querySelectorAll<HTMLElement>(
+      section.querySelectorAll<HTMLElement>(
         '.travel-support__service'
       )
 
@@ -145,7 +143,7 @@ onMounted(() => {
         once: true
       }
     })
-  }, sectionRef.value)
+  }, sectionRef)
 })
 
 onBeforeUnmount(() => {
@@ -164,19 +162,15 @@ onBeforeUnmount(() => {
       <header class="travel-support__header">
 
         <h2 class="travel-support__heading heading-xl">
-
           <span class="travel-support__heading-line">
             <span class="travel-support__heading-text">
-              EVERY DETAIL TAKEN CARE OF
-            </span> 
+              {{ travelSupport.title }}
+            </span>
           </span>
-
         </h2>
 
         <p class="travel-support__intro body-large">
-          From the practical to the personal, we help make
-          every part of your journey feel considered,
-          seamless and effortless.
+          {{ travelSupport.description }}
         </p>
 
       </header>
@@ -197,10 +191,12 @@ onBeforeUnmount(() => {
 
     <!-- Full Background Image -->
     <img
-      v-if="service.image"
-      :src="service.image"
-      :alt="service.title"
+      v-if="service.image?.url"
+      :src="service.image.url"
+      :alt="service.image.altText || service.title"
       class="travel-support__service-image"
+      loading="lazy"
+      decoding="async"
     />
 
     <!-- Dark overlay -->
@@ -228,28 +224,26 @@ onBeforeUnmount(() => {
      VISA CTA
 =================================================== -->
 
-      <div class="travel-support__cta">
+    <div class="travel-support__cta">
 
-        <div class="travel-support__cta-content">
-
-          <h3 class="travel-support__cta-title">
-            Make your visa process
-            <span>
-              feel effortless.
-            </span>
-          </h3>
-
-        </div>
-
-        <NuxtLink to="/support/visa" class="travel-support__cta-link">
-          <span>
-            Explore Visa Assistance
-          </span>
-
-          <Icon name="lucide:arrow-right" />
-        </NuxtLink>
-
+      <div class="travel-support__cta-content">
+        <h3 class="travel-support__cta-title">
+          {{ travelSupport.cta.title }}
+        </h3>
       </div>
+
+      <NuxtLink
+        :to="travelSupport.cta.href"
+        class="travel-support__cta-link"
+      >
+        <span>
+          {{ travelSupport.cta.label }}
+        </span>
+
+        <Icon name="lucide:arrow-right" />
+      </NuxtLink>
+
+    </div>
 
     </div>
   </section>
@@ -634,7 +628,7 @@ onBeforeUnmount(() => {
       21,
       0.2);
 
-  opacity: 0;
+  opacity: 1;
 }
 
 

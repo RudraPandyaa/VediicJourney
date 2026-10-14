@@ -4,32 +4,36 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 const sectionRef = ref<HTMLElement | null>(null)
 
-const points = [
-  {
-    number: '01',
-    title: 'INSTANT PRICING',
-    text: 'Enjoy complete price transparency and travel within budget.',
-    icon: 'lucide:tag'
-  },
-  {
-    number: '02',
-    title: '100% TAILOR MADE',
-    text: 'Your entire holiday is designed around your requirements.',
-    icon: 'lucide:mouse-pointer-click'
-  },
-  {
-    number: '03',
-    title: 'EXPERT KNOWLEDGE',
-    text: 'All our specialists have travelled extensively or lived in their specialist regions.',
-    icon: 'lucide:users-round'
-  },
-  {
-    number: '04',
-    title: 'THE BEST GUIDES',
-    text: 'Make the difference between a good trip and an outstanding one.',
-    icon: 'lucide:concierge-bell'
-  }
+
+interface WhyVedicItem {
+  title: string
+  description: string
+}
+
+interface WhyVedicContent {
+  items: WhyVedicItem[]
+
+}
+
+const props = defineProps<{
+  whyVedic: WhyVedicContent
+}>()
+
+const pointIcons = [
+  'lucide:user-round',
+  'lucide:sparkles',
+  'lucide:compass',
+  'lucide:headphones'
 ]
+
+const points = computed(() =>
+  (props.whyVedic.items || []).map((item, index) => ({
+    number: String(index + 1).padStart(2, '0'),
+    title: item.title,
+    text: item.description,
+    icon: pointIcons[index] || 'lucide:circle-check'
+  }))
+)
 
 let ctx: gsap.Context | null = null
 
@@ -37,12 +41,9 @@ onMounted(() => {
   gsap.registerPlugin(ScrollTrigger)
 
   if (!sectionRef.value) return
+  const section = sectionRef.value
 
   ctx = gsap.context(() => {
-    gsap.set('.why-vedic__heading-text', {
-      yPercent: 110
-    })
-
     gsap.set('.why-vedic__divider', {
       scaleX: 0
     })
@@ -54,7 +55,7 @@ onMounted(() => {
 
     const intro = gsap.timeline({
       scrollTrigger: {
-        trigger: sectionRef.value,
+        trigger: section,
         start: 'top 75%',
         once: true
       }
@@ -68,7 +69,7 @@ onMounted(() => {
           duration: 1,
           ease: 'power3.out'
         },
-        0
+        0.08
       )
       .to(
         '.why-vedic__divider',
@@ -90,7 +91,7 @@ onMounted(() => {
         },
         0.4
       )
-  }, sectionRef.value)
+  }, section)
 })
 
 onBeforeUnmount(() => {
@@ -107,11 +108,17 @@ onBeforeUnmount(() => {
       ================================================= -->
 
       <header class="why-vedic__header">
+        <!-- <p
+          v-if="whyVedic.eyebrow"
+          class="why-vedic__eyebrow"
+        >
+          {{ whyVedic.eyebrow }}
+        </p> -->
 
         <h2 class="why-vedic__heading heading-xl">
           <span class="why-vedic__heading-line">
             <span class="why-vedic__heading-text">
-              WHY CHOOSE US?
+                  WHY CHOOSE US?
             </span>
           </span>
         </h2>
@@ -151,6 +158,7 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 @use '~/assets/scss/variables' as *;
+
 
 .why-vedic {
   position: relative;
@@ -392,14 +400,13 @@ onBeforeUnmount(() => {
 @media (prefers-reduced-motion: reduce) {
   .why-vedic {
 
-    &__heading-text,
-    &__divider,
-    &__point {
-      opacity: 1 !important;
-
-      transform: none !important;
-
-      transition: none !important;
+  &__eyebrow,
+  &__heading-text,
+  &__divider,
+  &__point {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
     }
   }
 }

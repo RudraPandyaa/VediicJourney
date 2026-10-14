@@ -15,8 +15,8 @@
         preload="metadata"
       >
         <source
-          src="/videos/hero.mp4"
-          type="video/mp4"
+          :src="hero.video.url"
+          :type="hero.video.type === 'video' ? 'video/mp4' : undefined"
         >
       </video>
     </div>
@@ -33,38 +33,36 @@
       <div class="hero__content">
         <!-- Eyebrow -->
         <p class="hero__eyebrow eyebrow hero-animate-eyebrow">
-          <span>luxury travel redefined</span>
+          <span>{{ hero.eyebrow }}</span>
         </p>
 
         <!-- Main Heading -->
-        <h1 class="hero__title display-title">
-          <span class="hero__title-line">
+       <h1 class="hero__title display-title">
+          <span
+            v-for="(line, index) in heroTitleLines"
+            :key="index"
+            class="hero__title-line"
+          >
             <span class="hero__title-text">
-              Journeys beyond
-            </span>
-          </span>
-
-          <span class="hero__title-line">
-            <span class="hero__title-text">
-              the ordinary.
+              {{ line }}
             </span>
           </span>
         </h1>
 
         <!-- Description -->
         <p class="hero__description body-large hero-animate-description">
-          Beyond destinations. Bespoke journeys created for the way you dream of travelling.
+            {{ hero.description }}
         </p>
 
         <!-- CTA -->
         <NuxtLink
-          to="/destinations"
+            :to="hero.primaryCta.href"
         class="hero__cta text-link hero-animate-cta"
         >
-          <span>Begin Your Journey</span>
+          <span>{{ hero.primaryCta.label }}</span>
 
           <span class="hero__cta-arrow">
-            <Icon name="lucide:arrow-right" />
+              <Icon name="lucide:arrow-right" />
           </span>
         </NuxtLink>
       </div>
@@ -91,6 +89,50 @@
 import SiteHeader from '~/components/layout/SiteHeader.vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+const heroTitleLines = computed(() => {
+  const title = props.hero.title?.trim()
+
+  if (!title) return []
+
+  const words = title.split(' ')
+
+  if (words.length <= 3) {
+    return [title]
+  }
+
+  const middle = Math.ceil(words.length / 2)
+
+  return [
+    words.slice(0, middle).join(' '),
+    words.slice(middle).join(' ')
+  ]
+})
+
+interface HeroMedia {
+  _id: string
+  type: 'image' | 'video'
+  filename: string
+  url: string
+  altText?: string
+  width?: number
+  height?: number
+}
+
+interface HeroContent {
+  eyebrow: string
+  title: string
+  description: string
+  primaryCta: {
+    label: string
+    href: string
+  }
+  video: HeroMedia
+}
+
+const props = defineProps<{
+  hero: HeroContent
+}>()
 
 const heroRef = ref<HTMLElement | null>(null)
 const videoRef = ref<HTMLVideoElement | null>(null)
@@ -330,7 +372,7 @@ onUnmounted(() => {
 
     &__content {
     position: absolute;
-    top: 45%;
+    top: 52%;
     left: 0;
 
     width: min(900px, 68vw);
@@ -776,7 +818,7 @@ onUnmounted(() => {
 @media (min-width: 769px) and (max-height: 780px) {
   .hero {
     &__content {
-      top: 49%;
+      top: 53%;
     }
 
     &__eyebrow {

@@ -10,11 +10,13 @@ const props = withDefaults(
     multiple?: boolean
     selected?: string[]
     title?: string
+    type?: 'image' | 'video'
   }>(),
   {
     multiple: false,
     selected: () => [],
     title: 'Select visual',
+    type: 'image',
   },
 )
 
@@ -32,12 +34,13 @@ const {
 const search = ref('')
 const localSelected = ref<string[]>([])
 
-const images = computed(() => {
-  const query =
-    search.value.trim().toLowerCase()
+const filteredMedia = computed(() => {
+  const query = search.value
+    .trim()
+    .toLowerCase()
 
   return media.value
-    .filter(item => item.type === 'image')
+    .filter(item => item.type === props.type)
     .filter((item) => {
       if (!query) return true
 
@@ -148,11 +151,11 @@ watch(
           </div>
 
           <div
-            v-else-if="images.length"
+            v-else-if="filteredMedia.length"
             class="image-grid"
           >
             <button
-              v-for="item in images"
+              v-for="item in filteredMedia"
               :key="item._id"
               type="button"
               class="image-card"
@@ -163,12 +166,18 @@ watch(
               @click="toggle(item)"
             >
               <img
-                :src="item.url"
-                :alt="
-                  item.altText ||
-                  item.filename
-                "
-              >
+                  v-if="item.type === 'image'"
+                  :src="item.url"
+                  :alt="item.altText || item.filename"
+                >
+
+                <video
+                  v-else
+                  :src="item.url"
+                  muted
+                  playsinline
+                  preload="metadata"
+                />
 
               <div class="image-info">
                 <span>
@@ -300,6 +309,18 @@ header h2 {
   left: 15px;
   color: var(--muted);
   transform: translateY(-50%);
+}
+
+.image-card img,
+.image-card video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-card:hover img,
+.image-card:hover video {
+  transform: scale(1.035);
 }
 
 .search-box input {

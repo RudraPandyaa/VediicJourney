@@ -2,78 +2,62 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-interface Experience {
-  name: string
-  slug: string
-  description: string
-  image: string
+interface MediaItem {
+  _id: string
+  url: string
+  altText?: string
+  width?: number
+  height?: number
 }
 
-const experiences: Experience[] = [
-  {
-    name: 'Spiritual',
-    slug: 'spiritual',
-    description:
-      'Journeys of meaning shaped by ancient traditions, sacred places and moments that invite a deeper connection.',
-    image: '/images/experiences/spiritual.jpg'
-  },
-  {
-    name: 'Wellness',
-    slug: 'wellness',
-    description:
-      'Slow down, restore and reconnect through thoughtfully chosen retreats, healing traditions and restorative landscapes.',
-    image: '/images/experiences/wellness.jpg'
-  },
-  {
-    name: 'Adventure',
-    slug: 'adventure',
-    description:
-      'Venture beyond the familiar through remarkable landscapes, remote places and experiences that awaken your sense of discovery.',
-    image: '/images/experiences/adventure.jpg'
-  },
-  {
-    name: 'Wildlife',
-    slug: 'wildlife',
-    description:
-      'Encounter the natural world through extraordinary habitats, intimate safaris and carefully considered wildlife experiences.',
-    image: '/images/experiences/wildlife.jpg'
-  },
-  {
-    name: 'Culinary',
-    slug: 'culinary',
-    description:
-      'Discover a destination through its flavours, people and traditions — from local kitchens to unforgettable dining experiences.',
-    image: '/images/experiences/culinary.jpg'
-  },
-  {
-    name: 'Cultural',
-    slug: 'cultural',
-    description:
-      'Step inside living traditions, remarkable architecture and stories that reveal the true character of a place.',
-    image: '/images/experiences/cultural.jpg'
-  },
-  {
-    name: 'Luxury',
-    slug: 'luxury',
-    description:
-      'Exceptional stays, private access and beautifully considered details create journeys defined by effortless comfort.',
-    image: '/images/experiences/luxury.jpg'
-  },
-  {
-    name: 'Romance',
-    slug: 'romance',
-    description:
-      'Private moments, beautiful settings and journeys thoughtfully designed to be experienced together.',
-    image: '/images/experiences/romance.jpg'
-  },
-  {
-    name: 'Family',
-    slug: 'family',
-    description:
-      'Meaningful adventures for every generation, shaped around shared discovery, comfort and time together.',
-    image: '/images/experiences/family.jpg'
-  }
-]
+interface Experience {
+  _id: string
+  name: string
+  slug: string
+  shortDescription: string
+  image: MediaItem | null
+  sortOrder?: number
+}
+
+interface ExperienceContent {
+  title: string
+  featuredExperienceSlugs: string[]
+}
+
+const props = defineProps<{
+  experienceContent: ExperienceContent
+}>()
+
+const config = useRuntimeConfig()
+
+const { data: experiencesResponse } = await useAsyncData(
+  'home-experiences',
+  () =>
+    $fetch<any>(
+      `${config.public.apiBase}/experiences`,
+    ),
+)
+
+const allExperiences = computed<Experience[]>(() =>
+  experiencesResponse.value?.data ?? [],
+)
+
+const experiences = computed<Experience[]>(() => {
+  const slugs =
+    props.experienceContent.featuredExperienceSlugs || []
+
+  return slugs
+    .map((slug) =>
+      allExperiences.value.find(
+        (experience) =>
+          experience.slug === slug,
+      ),
+    )
+    .filter(
+      (experience): experience is Experience =>
+        Boolean(experience),
+    )
+})
 
 // ============================================================
 // REFS / STATE
@@ -99,18 +83,30 @@ let descriptionTween: gsap.core.Timeline | null = null
 // COMPUTED
 // ============================================================
 
-const activeExperience = computed<Experience>(() => {
-  return experiences[activeIndex.value] ?? experiences[0]!
+const activeExperience = computed<Experience | null>(() => {
+  return (
+    experiences.value[activeIndex.value] ??
+    experiences.value[0] ??
+    null
+  )
 })
 
 const previousIndex = computed(() => {
+  const total = experiences.value.length
+
+  if (!total) return 0
+
   return activeIndex.value === 0
-    ? experiences.length - 1
+    ? total - 1
     : activeIndex.value - 1
 })
 
 const nextIndex = computed(() => {
-  return activeIndex.value === experiences.length - 1
+  const total = experiences.value.length
+
+  if (!total) return 0
+
+  return activeIndex.value === total - 1
     ? 0
     : activeIndex.value + 1
 })
@@ -119,7 +115,9 @@ const activeNumber = computed(() => {
   return String(activeIndex.value + 1).padStart(2, '0')
 })
 
-const totalNumber = String(experiences.length).padStart(2, '0')
+const totalNumber = computed(() =>
+  String(experiences.value.length).padStart(2, '0'),
+)
 
 // ============================================================
 // AUTOPLAY
@@ -242,9 +240,12 @@ const changeExperience = (
 const nextExperience = (
   fromAutoplay = false
 ) => {
+  const total = experiences.value.length
+
+  if (!total) return
+
   const newIndex =
-    (activeIndex.value + 1) %
-    experiences.length
+    (activeIndex.value + 1) % total
 
   changeExperience(
     newIndex,
@@ -254,9 +255,13 @@ const nextExperience = (
 }
 
 const previousExperience = () => {
+  const total = experiences.value.length
+
+  if (!total) return
+
   const newIndex =
     activeIndex.value === 0
-      ? experiences.length - 1
+      ? total - 1
       : activeIndex.value - 1
 
   changeExperience(
@@ -556,12 +561,17 @@ onBeforeUnmount(() => {
             :aria-label="`Explore ${experience.name} experiences`"
           >
 
-            <img
-  :src="experience.image"
-  :alt="experience.name"
-  class="experiences__image"
-  loading="eager"
-  decoding="async"
+          <img
+            v-if="experience.image?.url"
+            :src="experience.image.url"
+            :alt="
+              experience.image.altText ||
+              experience.name
+            "
+            class="experiences__image"
+            loading="eager"
+            decoding="async"
+          >
 />
 
 <div
@@ -619,9 +629,7 @@ onBeforeUnmount(() => {
                 ref="descriptionRef"
                 class="experiences__description"
               >
-                {{
-                  activeExperience.description
-                }}
+                  {{ activeExperience?.shortDescription || '' }}
               </p>
 
             </div>
