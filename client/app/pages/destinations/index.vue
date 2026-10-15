@@ -7,9 +7,7 @@
       <div class="journey-hero__content">
 
         <h1 class="journey-hero__heading heading-xl">
-          Discover the world's most
-          <br />
-          extraordinary destinations.
+          {{ content.hero?.heading }}
         </h1>
       </div>
     </section>
@@ -84,7 +82,8 @@
         </div>
 
         <!-- RIGHT : INFORMATION -->
-        <div class="world-content">
+        <div   v-if="activeContinent"
+           class="world-content">
 
           <p class="world-content__eyebrow">
             {{ String(activeIndex + 1).padStart(2, '0') }}
@@ -164,7 +163,7 @@
         <div class="continent-grid-section__heading">
 
           <h2 class="continent-grid-section__title">
-            EXPLORE BY CONTINENT
+              {{ content.collection?.heading }}
           </h2>
         </div>
 
@@ -178,7 +177,7 @@
             <div class="continent-card__image">
               <img
                 :src="continent.image"
-                :alt="continent.name"
+                :alt="continent.alt"
                 loading="lazy"
               />
 
@@ -215,6 +214,66 @@ import * as THREE from 'three'
 import { CSS2DObject, CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+const config = useRuntimeConfig()
+
+const { data: pageResponse } = await useAsyncData(
+  'destinations-page',
+  () =>
+    $fetch<any>(
+      `${config.public.apiBase}/pages/destinations`
+    )
+)
+
+const { data: regionsResponse } = await useAsyncData(
+  'destination-regions',
+  () =>
+    $fetch<any>(
+      `${config.public.apiBase}/regions`
+    )
+)
+
+const { data: destinationsResponse } = await useAsyncData(
+  'destination-list',
+  () =>
+    $fetch<any>(
+      `${config.public.apiBase}/destinations`
+    )
+)
+
+const regions = computed<RegionApi[]>(() =>
+  regionsResponse.value?.data ?? []
+)
+
+const destinations = computed<DestinationApi[]>(() =>
+  destinationsResponse.value?.data ?? []
+)
+
+const page = computed(() =>
+  pageResponse.value?.data ?? null
+)
+
+const content = computed(() =>
+  page.value?.content ?? {}
+)
+
+useSeoMeta({
+  title: () =>
+    page.value?.seo?.title ||
+    page.value?.title ||
+    'Destinations | Vedic Journey',
+
+  description: () =>
+    page.value?.seo?.description || '',
+
+  ogTitle: () =>
+    page.value?.seo?.title ||
+    page.value?.title ||
+    'Destinations | Vedic Journey',
+
+  ogDescription: () =>
+    page.value?.seo?.description || ''
+})
+
 gsap.registerPlugin(ScrollTrigger)
 
 import SiteHeader from '~/components/layout/SiteHeader.vue'
@@ -238,119 +297,174 @@ interface Continent {
   lon: number
 }
 
-/* ============================================================
-   DESTINATION DATA
-============================================================ */
+interface MediaItem {
+  _id: string
+  url: string
+  altText?: string
+  width?: number
+  height?: number
+}
 
-const continents: Continent[] = [
-  {
-    name: 'Asia',
-    slug: 'asia',
-    description:
-      'Ancient traditions, soulful landscapes and extraordinary cultures come together in journeys shaped with depth, warmth and discovery.',
-    lat: 28,
-    lon: 85,
-    countries: [
-      { name: 'India', lat: 20.5937, lon: 78.9629 },
-      { name: 'Nepal', lat: 28.3949, lon: 84.124 },
-      { name: 'Japan', lat: 36.2048, lon: 138.2529 },
-      { name: 'Thailand', lat: 15.87, lon: 100.9925 }
-    ]
-  },
-  {
-    name: 'Europe',
-    slug: 'europe',
-    description:
-      'Timeless cities, beautiful countryside and enduring traditions unfold through journeys that reveal a more intimate side of Europe.',
-    lat: 50,
-    lon: 15,
-    countries: [
-      { name: 'France', lat: 46.2276, lon: 2.2137 },
-      { name: 'Italy', lat: 41.8719, lon: 12.5674 },
-      { name: 'Spain', lat: 40.4637, lon: -3.7492 },
-      { name: 'Greece', lat: 39.0742, lon: 21.8243 }
-    ]
-  },
-  {
-    name: 'Africa',
-    slug: 'africa',
-    description:
-      'Vast wilderness, remarkable wildlife and powerful landscapes create unforgettable journeys filled with wonder, stillness and connection.',
-    lat: 5,
-    lon: 20,
-    countries: [
-      { name: 'Kenya', lat: -0.0236, lon: 37.9062 },
-      { name: 'Tanzania', lat: -6.369, lon: 34.8888 },
-      { name: 'South Africa', lat: -30.5595, lon: 22.9375 },
-      { name: 'Morocco', lat: 31.7917, lon: -7.0926 }
-    ]
-  },
-  {
-    name: 'South America',
-    slug: 'south-america',
-    description:
-      'Dramatic landscapes, vibrant cultures and ancient stories come alive through journeys filled with colour, rhythm and discovery.',
-    lat: -15,
-    lon: -60,
-    countries: [
-      { name: 'Brazil', lat: -14.235, lon: -51.9253 },
-      { name: 'Peru', lat: -9.19, lon: -75.0152 },
-      { name: 'Chile', lat: -35.6751, lon: -71.543 },
-      { name: 'Argentina', lat: -38.4161, lon: -63.6167 }
-    ]
-  },
-  {
-    name: 'Australasia & Oceania',
-    slug: 'australasia-oceania',
-    description:
-      'Remote islands, dramatic coastlines and extraordinary natural beauty create journeys shaped by space, adventure and discovery.',
-    lat: -25,
-    lon: 135,
-    countries: [
-      { name: 'Australia', lat: -25.2744, lon: 133.7751 },
-      { name: 'New Zealand', lat: -40.9006, lon: 174.886 },
-      { name: 'Fiji', lat: -17.7134, lon: 178.065 },
-      { name: 'Papua New Guinea', lat: -6.315, lon: 143.9555 }
-    ]
-  },
-]
+interface RegionApi {
+  _id: string
+  name: string
+  slug: string
+  shortDescription: string
+  image: MediaItem | null
+  sortOrder: number
+}
 
-/* ============================================================
-   STATE
-============================================================ */
-
-const continentCards = [
-  {
-    name: 'Europe',
-    slug: 'europe',
-    image: '/images/destinations/europe.jpg'
-  },
-  {
-    name: 'South America',
-    slug: 'south-america',
-    image: '/images/destinations/south-america.jpg'
-  },
-  {
-    name: 'Africa',
-    slug: 'africa',
-    image: '/images/destinations/africa.jpg'
-  },
-  {
-    name: 'North America',
-    slug: 'north-america',
-    image: '/images/destinations/north-america.jpg'
-  },
-  {
-    name: 'Asia',
-    slug: 'asia',
-    image: '/images/destinations/asia.jpg'
-  },
-  {
-    name: 'Australia',
-    slug: 'australia',
-    image: '/images/destinations/australia.jpg'
+interface DestinationApi {
+  _id: string
+  name: string
+  slug: string
+  region: {
+    _id: string
+    name: string
+    slug: string
   }
-]
+  shortDescription: string
+  heroImage: MediaItem | null
+  isFeatured: boolean
+  sortOrder: number
+}
+
+const regionCoordinates: Record<
+  string,
+  {
+    lat: number
+    lon: number
+  }
+> = {
+  asia: {
+    lat: 28,
+    lon: 85
+  },
+
+  europe: {
+    lat: 50,
+    lon: 15
+  },
+
+  africa: {
+    lat: 5,
+    lon: 20
+  },
+
+  'middle-east': {
+    lat: 25,
+    lon: 45
+  },
+
+  'south-america': {
+    lat: -15,
+    lon: -60
+  },
+
+  oceania: {
+    lat: -25,
+    lon: 135
+  },
+
+  'north-america': {
+    lat: 40,
+    lon: -100
+  }
+}
+
+const destinationCoordinates: Record<
+  string,
+  {
+    lat: number
+    lon: number
+  }
+> = {
+  india: { lat: 20.5937, lon: 78.9629 },
+  japan: { lat: 36.2048, lon: 138.2529 },
+  thailand: { lat: 15.87, lon: 100.9925 },
+  vietnam: { lat: 14.0583, lon: 108.2772 },
+
+  france: { lat: 46.2276, lon: 2.2137 },
+  italy: { lat: 41.8719, lon: 12.5674 },
+  spain: { lat: 40.4637, lon: -3.7492 },
+  greece: { lat: 39.0742, lon: 21.8243 },
+  switzerland: { lat: 46.8182, lon: 8.2275 },
+
+  kenya: { lat: -0.0236, lon: 37.9062 },
+  'south-africa': { lat: -30.5595, lon: 22.9375 },
+  morocco: { lat: 31.7917, lon: -7.0926 },
+  egypt: { lat: 26.8206, lon: 30.8025 },
+
+  brazil: { lat: -14.235, lon: -51.9253 },
+  peru: { lat: -9.19, lon: -75.0152 },
+  argentina: { lat: -38.4161, lon: -63.6167 },
+
+  uae: { lat: 23.4241, lon: 53.8478 },
+  jordan: { lat: 30.5852, lon: 36.2384 }
+}
+
+const continents = computed<Continent[]>(() => {
+  return regions.value
+    .map((region) => {
+      const coordinates =
+        regionCoordinates[region.slug]
+
+      if (!coordinates) {
+        return null
+      }
+
+      const countries: CountryPoint[] =
+        destinations.value
+          .filter(
+            (destination) =>
+              destination.region?.slug === region.slug
+          )
+          .map((destination) => {
+            const point =
+              destinationCoordinates[destination.slug]
+
+            if (!point) {
+              return null
+            }
+
+            return {
+              name: destination.name,
+              lat: point.lat,
+              lon: point.lon
+            }
+          })
+          .filter(
+            (country): country is CountryPoint =>
+              country !== null
+          )
+
+      return {
+        name: region.name,
+        slug: region.slug,
+        description: region.shortDescription,
+        lat: coordinates.lat,
+        lon: coordinates.lon,
+        countries
+      }
+    })
+    .filter(
+      (continent): continent is Continent =>
+        continent !== null
+    )
+})
+
+const continentCards = computed(() =>
+  regions.value
+    .filter((region) => region.image?.url)
+    .map((region) => ({
+      name: region.name,
+      slug: region.slug,
+      image: region.image!.url,
+      alt:
+        region.image?.altText ||
+        region.name
+    }))
+)
 
 const activeIndex = ref(0)
 const isGlobeHovered = ref(false)
@@ -359,8 +473,8 @@ const showPins = ref(false)
 const worldSection = ref<HTMLElement | null>(null)
 const globeContainer = ref<HTMLElement | null>(null)
 
-const activeContinent = computed(() => {
-  return continents[activeIndex.value]
+const activeContinent = computed<Continent | null>(() => {
+  return continents.value[activeIndex.value] ?? null
 })
 
 /* ============================================================
@@ -501,12 +615,14 @@ function updatePins() {
 
   if (!showPins.value) return
 
-  activeContinent.value.countries.forEach(
-    (country) => {
-      const pin = createPin(country)
-      pinGroup?.add(pin)
-    }
-  )
+  const continent = activeContinent.value
+
+  if (!continent) return
+
+  continent.countries.forEach((country) => {
+    const pin = createPin(country)
+    pinGroup?.add(pin)
+  })
 }
 
 /* ============================================================
@@ -550,8 +666,13 @@ function rotateToContinent(
 ) {
   if (!globeGroup) return
 
+  const continent = continents.value[index]
+
+  if (!continent) return
+  if (!continent) return
+
   const targetY = getLongitudeRotation(
-    continents[index].lon
+    continent.lon
   )
 
   const currentY = globeGroup.rotation.y
@@ -638,6 +759,7 @@ function updateActiveContinentLabel() {
   if (!activeContinentLabel || !globeGroup) return
 
   const continent = activeContinent.value
+  if (!continent) return
   const element =
     activeContinentLabel.element as HTMLButtonElement
 
@@ -666,7 +788,9 @@ function updateActiveContinentLabel() {
 
 function initGlobe() {
   if (!globeContainer.value) return
+  const initialContinent = activeContinent.value
 
+  if (!initialContinent) return
   const container = globeContainer.value
 
   scene = new THREE.Scene()
@@ -744,14 +868,19 @@ function initGlobe() {
   label.textContent = activeContinent.value.name.toUpperCase()
   label.setAttribute(
     'aria-label',
-    `Explore ${activeContinent.value.name}`
+    `Explore ${initialContinent.name}`
   )
   label.style.pointerEvents = 'auto'
 
   label.addEventListener('click', (event) => {
     event.stopPropagation()
+
+    const continent = activeContinent.value
+
+    if (!continent) return
+
     navigateTo(
-      `/destinations/${activeContinent.value.slug}`
+      `/destinations/${continent.slug}`
     )
   })
 
@@ -868,8 +997,12 @@ function handleGlobeMouseLeave() {
 function handleGlobeClick() {
   if (isTransitioning) return
 
+  const continent = activeContinent.value
+
+  if (!continent) return
+
   navigateTo(
-    `/destinations/${activeContinent.value.slug}`
+    `/destinations/${continent.slug}`
   )
 }
 
@@ -881,7 +1014,7 @@ function selectContinent(index: number) {
   if (
     index === activeIndex.value ||
     index < 0 ||
-    index >= continents.length
+    index >= continents.value.length
   ) {
     return
   }
@@ -895,9 +1028,11 @@ function selectContinent(index: number) {
 }
 
 function nextContinent() {
+  if (!continents.value.length) return
+
   const next =
     (activeIndex.value + 1) %
-    continents.length
+    continents.value.length
 
   activeIndex.value = next
 
@@ -908,11 +1043,15 @@ function nextContinent() {
 }
 
 function previousContinent() {
+  if (!continents.value.length) return
+
   const previous =
-    (activeIndex.value -
+    (
+      activeIndex.value -
       1 +
-      continents.length) %
-    continents.length
+      continents.value.length
+    ) %
+    continents.value.length
 
   activeIndex.value = previous
 
