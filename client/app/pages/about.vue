@@ -4,16 +4,23 @@
       <SiteHeader />
       <div class="about-hero__content">
         <h1 class="about-hero__title">
-          TRAVEL WITH PURPOSE
+          {{ content.hero?.heading }}
         </h1>
+
         <p class="about-hero__intro body-large">
-          Your journey begins now. Are you ready to explore, learn,
-          and connect with the world on this remarkable expedition?
-          Welcome to the Vedic Journey community.
+          {{ content.hero?.description }}
         </p>
       </div>
       <div class="about-hero__image">
-        <img src="/images/destinations/south-africa.jpg" alt="Travel destination" />
+        <img
+          :src="
+            mediaUrl(
+              content.hero?.image,
+              '/images/destinations/south-africa.jpg'
+            )
+          "
+          alt="Travel destination"
+        />
       </div>
     </section>
 
@@ -26,29 +33,17 @@
           <article class="about-story__block">
 
             <h2 class="about-story__title">
-              OUR<br />CULTURE.
+                {{ content.culture?.heading }}
             </h2>
 
             <div class="about-story__line"></div>
 
             <div class="about-story__text">
-              <p>
-                Whether you’re an intrepid explorer seeking new horizons,
-                a seeker of spiritual insight, or someone who simply craves
-                the thrill of discovering the unfamiliar, &ldquo;Vedic Journey&rdquo;
-                is your partner in traversing this extraordinary planet.
-              </p>
-
-              <p>
-                Allow us to be your cultural compass, your mentor for
-                cross-cultural understanding, and your storyteller of the
-                world’s most intriguing narratives.
-              </p>
-
-              <p>
-                Join us in celebrating the timeless teachings and awe-inspiring
-                beauty that the world has to offer, where every step becomes
-                a &ldquo;Vedic Journey&rdquo; unto itself.
+              <p
+                v-for="(paragraph, index) in content.culture?.paragraphs || []"
+                :key="`culture-${index}`"
+              >
+                {{ paragraph }}
               </p>
             </div>
           </article>
@@ -56,22 +51,17 @@
           <article class="about-story__block about-story__block--purpose">
 
             <h2 class="about-story__title">
-              OUR<br />PURPOSE.
+                {{ content.purpose?.heading }}
             </h2>
 
             <div class="about-story__line"></div>
 
             <div class="about-story__text">
-              <p>
-                Allow us to be your cultural compass, your mentor for
-                cross-cultural understanding, and your storyteller of the
-                world’s most intriguing narratives.
-              </p>
-
-              <p>
-                Join us in celebrating the timeless teachings and awe-inspiring
-                beauty that the world has to offer, where every step becomes
-                a &ldquo;Vedic Journey&rdquo; unto itself.
+              <p
+                v-for="(paragraph, index) in content.purpose?.paragraphs || []"
+                :key="`purpose-${index}`"
+              >
+                {{ paragraph }}
               </p>
             </div>
           </article>
@@ -79,29 +69,51 @@
         </div>
 
         <!-- RIGHT: STEPPED IMAGE PLACEHOLDER COLLAGE -->
-        <div class="about-story__collage" aria-label="Travel image collage placeholders">
-
+        <div
+          class="about-story__collage"
+          aria-label="Travel image collage"
+        >
+          <!-- LEFT: Images 1–3 -->
           <div class="about-story__column about-story__column--left">
-            <div class="about-story__placeholder"><img src="/images/aboutPage/Otto Wulff Building.jpg" alt="Travel destination" /></div>
-            <div class="about-story__placeholder"><img src="/images/aboutPage/Brazil.jpg" alt="Travel destination" /></div>
-            <div class="about-story__placeholder"><img src="/images/aboutPage/Rome.jpg" alt="Travel destination" /></div>
+            <div
+              v-for="(image, index) in (content.collage?.images || []).slice(0, 3)"
+              :key="`collage-left-${index}`"
+              class="about-story__placeholder"
+            >
+              <img
+                :src="mediaUrl(image)"
+                alt="Travel destination"
+              />
+            </div>
           </div>
 
+          <!-- CENTER: Images 4–7 -->
           <div class="about-story__column about-story__column--center">
-            <div class="about-story__placeholder"><img src="/images/aboutPage/South Africa.jpg" alt="Travel destination" /> </div>
-            <div class="about-story__placeholder"><img src="/images/aboutPage/Bali.jpg" alt="Travel destination" /></div>
-            <div class="about-story__placeholder"><img src="/images/aboutPage/France.jpg" alt="Travel destination" /></div>
-            <div class="about-story__placeholder"><img src="/images/aboutPage/Japan.jpg" alt="Travel destination" /></div>
+            <div
+              v-for="(image, index) in (content.collage?.images || []).slice(3, 7)"
+              :key="`collage-center-${index}`"
+              class="about-story__placeholder"
+            >
+              <img
+                :src="mediaUrl(image)"
+                alt="Travel destination"
+              />
+            </div>
           </div>
 
+          <!-- RIGHT: Images 8–12 -->
           <div class="about-story__column about-story__column--right">
-            <div class="about-story__placeholder"><img src="/images/aboutPage/african safari.jpg" alt="Travel destination" /></div>
-            <div class="about-story__placeholder"><img src="/images/aboutPage/Australia.jpg" alt="Travel destination" /></div>
-            <div class="about-story__placeholder"><img src="/images/aboutPage/Beach.jpg" alt="Travel destination" /></div>
-            <div class="about-story__placeholder"><img src="/images/aboutPage/Rajasthan.jpg" alt="Travel destination" /></div>
-            <div class="about-story__placeholder"><img src="/images/aboutPage/Dubai.jpg" alt="Travel destination" /></div>
+            <div
+              v-for="(image, index) in (content.collage?.images || []).slice(7, 12)"
+              :key="`collage-right-${index}`"
+              class="about-story__placeholder"
+            >
+              <img
+                :src="mediaUrl(image)"
+                alt="Travel destination"
+              />
+            </div>
           </div>
-
         </div>
 
       </div>
@@ -109,49 +121,22 @@
 
     <section class="about-beliefs">
       <div class="about-beliefs__header">
-        <h2>MISSION, VISION <br /> &amp; VALUES.</h2>
+        <h2>{{ content.beliefs?.heading }}</h2>
       </div>
 
       <div class="about-beliefs__list">
-        <article class="about-belief">
-
+        <article
+          v-for="(item, index) in content.beliefs?.items || []"
+          :key="`belief-${index}`"
+          class="about-belief"
+        >
           <div class="about-belief__content">
-            <h3>MISSION</h3>
+            <h3>{{ item.title }}</h3>
+
             <div class="about-belief__line"></div>
+
             <p>
-              To inspire transformative journeys that connect travelers
-              with the ancient wisdom and diverse cultures of the world,
-              fostering personal growth and a deeper understanding of our
-              shared human heritage.
-            </p>
-          </div>
-        </article>
-
-        <article class="about-belief">
-
-          <div class="about-belief__content">
-            <h3>VISION</h3>
-            <div class="about-belief__line"></div>
-            <p>
-              Vedic Journey provides immersive travel experiences that
-              blend modern comfort with ancient traditions. Our unique
-              itineraries, led by local experts, aim to foster mindfulness
-              and a sense of unity in our clients.
-            </p>
-          </div>
-        </article>
-
-        <article class="about-belief">
-
-          <div class="about-belief__content">
-            <h3>VALUES</h3>
-            <div class="about-belief__line"></div>
-            <p>
-              Vedic Journey’s values are rooted in heritage preservation,
-              authenticity, sustainability, and mindful exploration. We
-              prioritize our customers, delivering exceptional service,
-              and embrace inclusivity by welcoming travelers from all
-              backgrounds.
+              {{ item.description }}
             </p>
           </div>
         </article>
@@ -160,24 +145,35 @@
 
     <section class="about-difference">
       <div class="about-difference__image">
-        <img src="/images/owner.jpg" alt="Subrata Chatterjee, Founder of Vedic Journey" />
+        <img
+          :src="mediaUrl(content.founder?.image, '/images/owner.jpg')"
+          :alt="`${content.founder?.name || 'Vedic Journey'} Founder`"
+        />
       </div>
+
       <div class="about-difference__content">
-        <p class="about-difference__eyebrow eyebrow">Meet the Founder</p>
-        <h2>SUBRATA CHATTERJEE.</h2>
-        <div class="about-difference__line"></div>
-        <p class="about-difference__description body-large">
-          With a vast experience of more than 25 years in the travel,
-          hospitality &amp; aviation industry, we are well-versed with all
-          its aspects, including but not limited to logistics,
-          administration and the industry’s backbone – the people we serve
-          and the people who help to provide the services.
+        <p class="about-difference__eyebrow eyebrow">
+          {{ content.founder?.eyebrow }}
         </p>
+
+        <h2>
+          {{ content.founder?.name }}
+        </h2>
+
+        <div class="about-difference__line"></div>
+
+        <p class="about-difference__description body-large">
+          {{ content.founder?.description }}
+        </p>
+
         <div class="about-difference__features">
-          <div class="about-difference__feature"><strong>25+ Years Experience</strong></div>
-          <div class="about-difference__feature"><strong>Travel &amp; Hospitality</strong></div>
-          <div class="about-difference__feature"><strong>Corporate Events</strong></div>
-          <div class="about-difference__feature"><strong>Personal Journeys</strong></div>
+          <div
+            v-for="(feature, index) in content.founder?.features || []"
+            :key="`founder-feature-${index}`"
+            class="about-difference__feature"
+          >
+            <strong>{{ feature }}</strong>
+          </div>
         </div>
       </div>
     </section>
@@ -185,44 +181,65 @@
     <section class="about-philosophy">
       <div class="about-philosophy__inner">
         <blockquote>
-          “Allow us to be your cultural compass, your mentor for
-          cross-cultural understanding, and your storyteller of the
-          world’s most intriguing narratives.”
+          {{ content.philosophy?.quote }}
         </blockquote>
+
         <p class="about-philosophy__text">
-          We carved memorable experiences for various large-scale corporate
-          events, team-building and goal-setting seminars for smaller teams
-          of big corporate houses and even for individuals who have travelled
-          solo or with a select group of their chosen friends, family members
-          and acquaintances.
+          {{ content.philosophy?.description }}
         </p>
       </div>
     </section>
 
     <section class="about-destinations">
       <div class="about-destinations__content">
-        <h2>EXPLORE<br />THE WORLD</h2>
+        <h2>
+          {{ content.destinationsCta?.heading }}
+        </h2>
+
         <p class="body-large">
-          Whether you are seeking new horizons, spiritual insight,
-          or the thrill of discovering the unfamiliar, join us on
-          a remarkable expedition across the world.
+          {{ content.destinationsCta?.description }}
         </p>
-        <NuxtLink to="/destinations" class="about-destinations__link">
-          <span>Explore Destinations</span>
+
+        <NuxtLink
+          :to="content.destinationsCta?.buttonUrl || '/destinations'"
+          class="about-destinations__link"
+        >
+          <span>
+            {{ content.destinationsCta?.buttonLabel }}
+          </span>
+
           <span class="about-destinations__arrow">
             <Icon name="lucide:arrow-right" />
           </span>
         </NuxtLink>
       </div>
+
       <div class="about-destinations__image">
-        <img src="/images/destinations/middle-east.jpg" alt="Vedic Journey destination" />
+        <img
+          :src="
+            mediaUrl(
+              content.destinationsCta?.image,
+              '/images/destinations/middle-east.jpg'
+            )
+          "
+          alt="Vedic Journey destination"
+        />
       </div>
     </section>
 
     <section class="about-final">
-      <h2>LET’S MAKE IT<br />MEMORABLE.</h2>
-      <NuxtLink to="/contact" class="about-final__link">
-        <span>Contact Us</span>
+      <h2>
+        {{ content.finalCta?.heading }}
+      </h2>
+
+      <NuxtLink
+        :to="content.finalCta?.buttonUrl || '/contact'"
+        class="about-final__link"
+      >
+        <span>
+          {{ content.finalCta?.buttonLabel }}
+        </span>
+
         <span>
           <Icon name="lucide:arrow-right" />
         </span>
@@ -235,6 +252,7 @@
 <script setup lang="ts">
 
 import {
+  computed,
   onMounted,
   onUnmounted
 } from 'vue'
@@ -243,6 +261,57 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 import SiteHeader from '~/components/layout/SiteHeader.vue'
+const config = useRuntimeConfig()
+
+const { data: aboutResponse } = await useAsyncData(
+  'about-page',
+  () =>
+    $fetch<any>(
+      `${config.public.apiBase}/pages/about`
+    )
+)
+
+const about = computed(() =>
+  aboutResponse.value?.data ?? null
+)
+
+const content = computed(() =>
+  about.value?.content ?? {}
+)
+
+const mediaUrl = (
+  media: any,
+  fallback = ''
+) => {
+  if (!media) return fallback
+
+  if (typeof media === 'string') {
+    return media
+  }
+
+  return media?.url || fallback
+}
+
+useSeoMeta({
+  title: () =>
+    about.value?.seo?.title ||
+    about.value?.title ||
+    'About | Vedic Journey',
+
+  description: () =>
+    about.value?.seo?.description || '',
+
+  ogTitle: () =>
+    about.value?.seo?.title ||
+    about.value?.title ||
+    'About | Vedic Journey',
+
+  ogDescription: () =>
+    about.value?.seo?.description || '',
+
+  ogImage: () =>
+    mediaUrl(about.value?.seo?.ogImage)
+})
 
 gsap.registerPlugin(ScrollTrigger)
 

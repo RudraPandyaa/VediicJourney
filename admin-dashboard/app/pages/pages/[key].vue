@@ -597,18 +597,24 @@
 
             <!-- ABOUT -->
             <template v-else-if="pageKey === 'about'">
+
+              <!-- 01 HERO -->
               <div class="section-block">
                 <div class="section-title">
                   <span>01</span>
                   <div>
-                    <h3>Hero</h3>
-                    <p>About page introduction.</p>
+                    <h3>Hero Section</h3>
+                    <p>About page introduction and hero image.</p>
                   </div>
                 </div>
 
                 <div class="field">
                   <label>Heading</label>
-                  <input v-model="form.content.hero.heading" type="text" />
+                  <input
+                    v-model="form.content.hero.heading"
+                    type="text"
+                    placeholder="TRAVEL WITH PURPOSE"
+                  />
                 </div>
 
                 <div class="field">
@@ -618,81 +624,361 @@
                     rows="4"
                   />
                 </div>
+
+                <div class="field">
+                  <label>Hero Image</label>
+                  <button
+                    type="button"
+                    class="media-select"
+                    @click="openHomeMediaPicker('aboutHeroImage', 'image')"
+                  >
+                    {{
+                      form.content.hero.image
+                        ? 'Change Hero Image'
+                        : '+ Select Hero Image'
+                    }}
+                  </button>
+                </div>
               </div>
 
+              <!-- 02 CULTURE -->
               <div class="section-block">
                 <div class="section-title">
                   <span>02</span>
                   <div>
-                    <h3>Our Story</h3>
-                    <p>The Vedic Journey brand story.</p>
+                    <h3>Our Culture</h3>
+                    <p>Vedic Journey culture and brand story.</p>
                   </div>
                 </div>
 
                 <div class="field">
                   <label>Heading</label>
-                  <input v-model="form.content.story.heading" type="text" />
+                  <input
+                    v-model="form.content.culture.heading"
+                    type="text"
+                    placeholder="OUR CULTURE."
+                  />
                 </div>
 
-                <div class="field">
-                  <label>Content</label>
+                <div
+                  v-for="(_, index) in form.content.culture.paragraphs"
+                  :key="`culture-${index}`"
+                  class="field"
+                >
+                  <label>Paragraph {{ Number(index) + 1 }}</label>
                   <textarea
-                    v-model="form.content.story.description"
-                    rows="8"
+                    v-model="form.content.culture.paragraphs[index]"
+                    rows="4"
                   />
                 </div>
               </div>
 
+              <!-- 03 PURPOSE -->
               <div class="section-block">
                 <div class="section-title">
                   <span>03</span>
                   <div>
-                    <h3>Founder</h3>
-                    <p>Founder introduction and message.</p>
-                  </div>
-                </div>
-
-                <div class="field">
-                  <label>Name</label>
-                  <input v-model="form.content.founder.name" type="text" />
-                </div>
-
-                <div class="field">
-                  <label>Title</label>
-                  <input v-model="form.content.founder.title" type="text" />
-                </div>
-
-                <div class="field">
-                  <label>Story</label>
-                  <textarea
-                    v-model="form.content.founder.description"
-                    rows="7"
-                  />
-                </div>
-              </div>
-
-              <div class="section-block">
-                <div class="section-title">
-                  <span>04</span>
-                  <div>
-                    <h3>Final CTA</h3>
-                    <p>Closing call-to-action.</p>
+                    <h3>Our Purpose</h3>
+                    <p>The purpose and approach behind Vedic Journey.</p>
                   </div>
                 </div>
 
                 <div class="field">
                   <label>Heading</label>
-                  <input v-model="form.content.cta.heading" type="text" />
+                  <input
+                    v-model="form.content.purpose.heading"
+                    type="text"
+                    placeholder="OUR PURPOSE."
+                  />
+                </div>
+
+                <div
+                  v-for="(_, index) in form.content.purpose.paragraphs"
+                  :key="`purpose-${index}`"
+                  class="field"
+                >
+                  <label>Paragraph {{ Number(index) + 1 }}</label>
+                  <textarea
+                    v-model="form.content.purpose.paragraphs[index]"
+                    rows="4"
+                  />
+                </div>
+              </div>
+
+              <!-- 04 STORY COLLAGE -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>04</span>
+                  <div>
+                    <h3>Story Collage</h3>
+                    <p>Images displayed in the animated About page collage.</p>
+                  </div>
+                </div>
+
+                <div
+                  v-for="(_, index) in form.content.collage.images"
+                  :key="`collage-${index}`"
+                  class="field"
+                >
+                  <label>Collage Image {{ Number(index) + 1 }}</label>
+
+                  <button
+                    type="button"
+                    class="media-select"
+                    @click="
+                      openHomeMediaPicker(
+                        `aboutCollage:${Number(index)}`,
+                        'image'
+                      )
+                    "
+                  >
+                    {{
+                      form.content.collage.images[index]
+                        ? `Change Image ${Number(index) + 1}`
+                        : `+ Select Image ${Number(index) + 1}`
+                    }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- 05 MISSION / VISION / VALUES -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>05</span>
+                  <div>
+                    <h3>Mission, Vision & Values</h3>
+                    <p>Core beliefs displayed on the About page.</p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Section Heading</label>
+                  <input
+                    v-model="form.content.beliefs.heading"
+                    type="text"
+                    placeholder="MISSION, VISION & VALUES."
+                  />
+                </div>
+
+                <div
+                  v-for="(item, index) in form.content.beliefs.items"
+                  :key="`belief-${index}`"
+                  class="nested-item"
+                >
+                  <div class="field">
+                    <label>Item {{ Number(index) + 1 }} Title</label>
+                    <input
+                      v-model="item.title"
+                      type="text"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label>Description</label>
+                    <textarea
+                      v-model="item.description"
+                      rows="4"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- 06 FOUNDER -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>06</span>
+                  <div>
+                    <h3>Founder</h3>
+                    <p>Founder profile, story and experience highlights.</p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Eyebrow</label>
+                  <input
+                    v-model="form.content.founder.eyebrow"
+                    type="text"
+                    placeholder="Meet the Founder"
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Name</label>
+                  <input
+                    v-model="form.content.founder.name"
+                    type="text"
+                    placeholder="SUBRATA CHATTERJEE."
+                  />
                 </div>
 
                 <div class="field">
                   <label>Description</label>
                   <textarea
-                    v-model="form.content.cta.description"
-                    rows="3"
+                    v-model="form.content.founder.description"
+                    rows="6"
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Founder Image</label>
+
+                  <button
+                    type="button"
+                    class="media-select"
+                    @click="openHomeMediaPicker('aboutFounderImage', 'image')"
+                  >
+                    {{
+                      form.content.founder.image
+                        ? 'Change Founder Image'
+                        : '+ Select Founder Image'
+                    }}
+                  </button>
+                </div>
+
+                <div
+                  v-for="(_, index) in form.content.founder.features"
+                  :key="`founder-feature-${index}`"
+                  class="field"
+                >
+                  <label>Highlight {{ Number(index) + 1 }}</label>
+                  <input
+                    v-model="form.content.founder.features[index]"
+                    type="text"
                   />
                 </div>
               </div>
+
+              <!-- 07 PHILOSOPHY -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>07</span>
+                  <div>
+                    <h3>Philosophy</h3>
+                    <p>Founder philosophy and supporting copy.</p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Quote</label>
+                  <textarea
+                    v-model="form.content.philosophy.quote"
+                    rows="4"
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Description</label>
+                  <textarea
+                    v-model="form.content.philosophy.description"
+                    rows="5"
+                  />
+                </div>
+              </div>
+
+              <!-- 08 EXPLORE WORLD -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>08</span>
+                  <div>
+                    <h3>Explore The World</h3>
+                    <p>Destination discovery call-to-action.</p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Heading</label>
+                  <input
+                    v-model="form.content.destinationsCta.heading"
+                    type="text"
+                    placeholder="EXPLORE THE WORLD"
+                  />
+                </div>
+
+                <div class="field">
+                  <label>Description</label>
+                  <textarea
+                    v-model="form.content.destinationsCta.description"
+                    rows="4"
+                  />
+                </div>
+
+                <div class="two-column">
+                  <div class="field">
+                    <label>Button Label</label>
+                    <input
+                      v-model="form.content.destinationsCta.buttonLabel"
+                      type="text"
+                      placeholder="Explore Destinations"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label>Button Link</label>
+                    <input
+                      v-model="form.content.destinationsCta.buttonUrl"
+                      type="text"
+                      placeholder="/destinations"
+                    />
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Background Image</label>
+
+                  <button
+                    type="button"
+                    class="media-select"
+                    @click="openHomeMediaPicker('aboutDestinationsImage', 'image')"
+                  >
+                    {{
+                      form.content.destinationsCta.image
+                        ? 'Change Background Image'
+                        : '+ Select Background Image'
+                    }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- 09 FINAL CTA -->
+              <div class="section-block">
+                <div class="section-title">
+                  <span>09</span>
+                  <div>
+                    <h3>Final CTA</h3>
+                    <p>Closing About page call-to-action.</p>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Heading</label>
+                  <input
+                    v-model="form.content.finalCta.heading"
+                    type="text"
+                    placeholder="LET'S MAKE IT MEMORABLE."
+                  />
+                </div>
+
+                <div class="two-column">
+                  <div class="field">
+                    <label>Button Label</label>
+                    <input
+                      v-model="form.content.finalCta.buttonLabel"
+                      type="text"
+                      placeholder="Contact Us"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label>Button Link</label>
+                    <input
+                      v-model="form.content.finalCta.buttonUrl"
+                      type="text"
+                      placeholder="/contact"
+                    />
+                  </div>
+                </div>
+              </div>
+
             </template>
 
             <!-- DESTINATIONS -->
@@ -1023,18 +1309,22 @@ const saveSuccess = ref(false)
 const mediaPickerOpen = ref(false)
 const selectedOgImage = ref<MediaItem | null>(null)
 
-  type HomeMediaTarget =
+type PageMediaTarget =
   | 'heroVideo'
   | 'indiaVideo'
   | 'philosophyImage'
   | `supportImage:${number}`
+  | 'aboutHeroImage'
+  | `aboutCollage:${number}`
+  | 'aboutFounderImage'
+  | 'aboutDestinationsImage'
 
 const homeMediaPickerOpen = ref(false)
-const homeMediaTarget = ref<HomeMediaTarget | null>(null)
+const homeMediaTarget = ref<PageMediaTarget | null>(null)
 const homeMediaType = ref<'image' | 'video'>('image')
 
 const openHomeMediaPicker = (
-  target: HomeMediaTarget,
+  target: PageMediaTarget,
   type: 'image' | 'video',
 ) => {
   homeMediaTarget.value = target
@@ -1055,9 +1345,7 @@ const selectHomeMedia = (items: MediaItem[]) => {
   } else if (target === 'philosophyImage') {
     form.content.philosophy.image = media._id
   } else if (target.startsWith('supportImage:')) {
-    const index = Number(
-      target.split(':')[1],
-    )
+    const index = Number(target.split(':')[1])
 
     const service =
       form.content.travelSupport.services[index]
@@ -1065,6 +1353,18 @@ const selectHomeMedia = (items: MediaItem[]) => {
     if (service) {
       service.image = media._id
     }
+  } else if (target === 'aboutHeroImage') {
+    form.content.hero.image = media._id
+  } else if (target.startsWith('aboutCollage:')) {
+    const index = Number(target.split(':')[1])
+
+    if (Number.isInteger(index)) {
+      form.content.collage.images[index] = media._id
+    }
+  } else if (target === 'aboutFounderImage') {
+    form.content.founder.image = media._id
+  } else if (target === 'aboutDestinationsImage') {
+    form.content.destinationsCta.image = media._id
   }
 
   homeMediaPickerOpen.value = false
@@ -1149,19 +1449,57 @@ const createDefaultContent = (key: string) => {
       hero: {
         heading: '',
         description: '',
+        image: '',
       },
-      story: {
+
+      culture: {
         heading: '',
-        description: '',
+        paragraphs: ['', '', ''],
       },
+
+      purpose: {
+        heading: '',
+        paragraphs: ['', ''],
+      },
+
+      collage: {
+        images: Array(12).fill(''),
+      },
+
+      beliefs: {
+        heading: '',
+        items: [
+          { title: 'MISSION', description: '' },
+          { title: 'VISION', description: '' },
+          { title: 'VALUES', description: '' },
+        ],
+      },
+
       founder: {
+        eyebrow: '',
         name: '',
-        title: '',
+        description: '',
+        image: '',
+        features: ['', '', '', ''],
+      },
+
+      philosophy: {
+        quote: '',
         description: '',
       },
-      cta: {
+
+      destinationsCta: {
         heading: '',
         description: '',
+        buttonLabel: '',
+        buttonUrl: '/destinations',
+        image: '',
+      },
+
+      finalCta: {
+        heading: '',
+        buttonLabel: '',
+        buttonUrl: '/contact',
       },
     }
   }
@@ -1267,7 +1605,7 @@ const loadPage = async () => {
       data.content || {},
     )
 
-        if (pageKey.value === 'home') {
+    if (pageKey.value === 'home') {
       const mediaId = (value: any) => {
         if (!value) return ''
         if (typeof value === 'string') return value
@@ -1291,6 +1629,28 @@ const loadPage = async () => {
             image: mediaId(service.image),
           }),
         )
+    }
+
+    if (pageKey.value === 'about') {
+          const mediaId = (value: any) => {
+            if (!value) return ''
+            if (typeof value === 'string') return value
+            return value?._id || ''
+          }
+
+          form.content.hero.image =
+            mediaId(form.content.hero.image)
+
+          form.content.collage.images =
+            (form.content.collage.images || []).map(
+              (image: any) => mediaId(image),
+            )
+
+          form.content.founder.image =
+            mediaId(form.content.founder.image)
+
+          form.content.destinationsCta.image =
+            mediaId(form.content.destinationsCta.image)
     }
 
     form.seo.title = data.seo?.title || ''
@@ -1348,6 +1708,15 @@ const savePage = async () => {
     delete form.content.whyVedic?.eyebrow
     delete form.content.whyVedic?.title
     delete form.content.whyVedic?.image
+  }
+
+  if (pageKey.value === 'about') {
+    delete form.content.story
+    delete form.content.cta
+
+    if (form.content.founder) {
+      delete form.content.founder.title
+    }
   }
 
   try {
